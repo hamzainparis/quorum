@@ -92,7 +92,7 @@ describe('Poker', () => {
 
     const spy = jest.fn();
     component.vote.subscribe(spy);
-    const fiveCard = cards.find((c) => c.textContent?.trim() === '5');
+    const fiveCard = cards.find((c) => c.querySelector('.qrm-poker__plain-value')?.textContent?.trim() === '5');
     fiveCard?.click();
     fixture.detectChanges();
 
@@ -103,7 +103,7 @@ describe('Poker', () => {
   it('clears my selected card once the server confirms a new voting round started', () => {
     setup({ votedPlayerIds: [] });
     const cards: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.qrm-poker__deck-card'));
-    cards.find((c) => c.textContent?.trim() === '5')?.click();
+    cards.find((c) => c.querySelector('.qrm-poker__plain-value')?.textContent?.trim() === '5')?.click();
     fixture.componentRef.setInput('votedPlayerIds', ['p1']);
     fixture.detectChanges();
 
@@ -141,7 +141,7 @@ describe('Poker', () => {
     setup({ isFacilitator: true, revealed: true, votes: { p1: 5, p2: '?' } });
     const assignCards: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.qrm-poker__assign-card'));
     const suggested = assignCards.find((c) => c.className.includes('--suggested'));
-    expect(suggested?.textContent?.trim()).toBe('5');
+    expect(suggested?.querySelector('.qrm-poker__plain-value')?.textContent?.trim()).toBe('5');
 
     const spy = jest.fn();
     component.assignEstimate.subscribe(spy);
