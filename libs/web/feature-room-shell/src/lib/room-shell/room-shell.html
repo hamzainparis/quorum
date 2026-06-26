@@ -45,7 +45,7 @@
         [title]="isRealisticTheme() ? 'Using realistic cards — switch to classic' : 'Using classic cards — switch to realistic'"
         (click)="toggleCardTheme()"
       >
-        🂡
+        {{ isRealisticTheme() ? '♠' : '⬡' }}
       </button>
 
       <button type="button" class="qrm-room__settings-btn" title="Project settings" (click)="openSettings()">

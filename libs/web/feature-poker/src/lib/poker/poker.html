@@ -41,8 +41,25 @@
     <div class="qrm-poker__players">
       @for (p of playerCards(); track p.id) {
         <div class="qrm-poker__player">
-          <div class="qrm-poker__card qrm-poker__card--{{ p.state }}" [class.qrm-poker__card--joker]="p.joker">
+          <div
+            class="qrm-poker__card qrm-poker__card--{{ p.state }}"
+            [class.qrm-poker__card--joker]="p.joker"
+            [class.qrm-poker__card--red]="p.suit?.color === 'red'"
+          >
             <span class="qrm-poker__card-face">{{ p.face }}</span>
+            @if (p.state === 'revealed') {
+              <span class="qrm-poker__card-real">
+                @if (p.joker) {
+                  <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">J</span>
+                  <span class="qrm-poker__pip-center">🃏</span>
+                  <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">J</span>
+                } @else {
+                  <span class="qrm-poker__corner qrm-poker__corner--tl">{{ p.face }}<small>{{ p.suit?.symbol }}</small></span>
+                  <span class="qrm-poker__pip-center">{{ p.suit?.symbol }}</span>
+                  <span class="qrm-poker__corner qrm-poker__corner--br">{{ p.face }}<small>{{ p.suit?.symbol }}</small></span>
+                }
+              </span>
+            }
           </div>
           <div class="qrm-poker__identity">
             <qrm-avatar [name]="p.name" [color]="p.color" size="xs" />
@@ -95,9 +112,19 @@
             class="qrm-poker__deck-card"
             [class.qrm-poker__deck-card--selected]="c.selected"
             [class.qrm-poker__deck-card--joker]="c.joker"
+            [class.qrm-poker__deck-card--red]="c.suit?.color === 'red'"
             (click)="selectVote(c.value)"
           >
-            {{ c.value }}
+            <span class="qrm-poker__plain-value">{{ c.value }}</span>
+            @if (c.joker) {
+              <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">J</span>
+              <span class="qrm-poker__pip-center">🃏</span>
+              <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">J</span>
+            } @else {
+              <span class="qrm-poker__corner qrm-poker__corner--tl">{{ c.value }}<small>{{ c.suit?.symbol }}</small></span>
+              <span class="qrm-poker__pip-center">{{ c.suit?.symbol }}</span>
+              <span class="qrm-poker__corner qrm-poker__corner--br">{{ c.value }}<small>{{ c.suit?.symbol }}</small></span>
+            }
           </button>
         }
       </div>
@@ -116,9 +143,13 @@
               type="button"
               class="qrm-poker__assign-card"
               [class.qrm-poker__assign-card--suggested]="a.suggested"
+              [class.qrm-poker__assign-card--red]="a.suit.color === 'red'"
               (click)="assignEstimate.emit(a.value)"
             >
-              {{ a.value }}
+              <span class="qrm-poker__plain-value">{{ a.value }}</span>
+              <span class="qrm-poker__corner qrm-poker__corner--tl">{{ a.value }}<small>{{ a.suit.symbol }}</small></span>
+              <span class="qrm-poker__pip-center">{{ a.suit.symbol }}</span>
+              <span class="qrm-poker__corner qrm-poker__corner--br">{{ a.value }}<small>{{ a.suit.symbol }}</small></span>
             </button>
           }
         }

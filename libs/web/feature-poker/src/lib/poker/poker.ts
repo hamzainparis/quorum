@@ -11,6 +11,26 @@ import { Avatar, Badge, Card, CONSENSUS_META, RichText, TICKET_PRIORITY_META, TI
 
 type PlayerCardState = 'revealed' | 'voted' | 'pending';
 
+interface CardSuit {
+  symbol: string;
+  color: 'red' | 'black';
+}
+
+// Real-card theme: each Fibonacci value gets a fixed suit so the deck reads
+// like a proper set, with black/red alternating value-over-value.
+const SUIT_CYCLE: CardSuit[] = [
+  { symbol: '♠', color: 'black' },
+  { symbol: '♥', color: 'red' },
+  { symbol: '♣', color: 'black' },
+  { symbol: '♦', color: 'red' },
+];
+
+const NUMERIC_DECK = FIBONACCI_DECK.filter((v): v is number => typeof v === 'number');
+
+function suitForValue(value: number): CardSuit {
+  return SUIT_CYCLE[NUMERIC_DECK.indexOf(value) % SUIT_CYCLE.length];
+}
+
 interface PlayerCard {
   id: string;
   name: string;
@@ -19,17 +39,20 @@ interface PlayerCard {
   face: string;
   state: PlayerCardState;
   joker: boolean;
+  suit: CardSuit | null;
 }
 
 interface DeckCard {
   value: VoteValue;
   selected: boolean;
   joker: boolean;
+  suit: CardSuit | null;
 }
 
 interface AssignCard {
   value: number;
   suggested: boolean;
+  suit: CardSuit;
 }
 
 @Component({
@@ -129,8 +152,10 @@ export class Poker {
       const hasVoted = this.votedPlayerIds().includes(p.id);
       let face = '';
       let state: PlayerCardState = 'pending';
+      let vote: VoteValue | null = null;
       if (this.revealed() && hasVoted) {
-        face = String(this.votes()[p.id]);
+        vote = this.votes()[p.id];
+        face = String(vote);
         state = 'revealed';
       } else if (hasVoted) {
         face = '✓';
@@ -143,7 +168,8 @@ export class Poker {
         shortName: p.id === this.currentPlayerId() ? 'You' : p.name.split(' ')[0],
         face,
         state,
-        joker: state === 'revealed' && face === '?',
+        joker: state === 'revealed' && vote === '?',
+        suit: typeof vote === 'number' ? suitForValue(vote) : null,
       };
     })
   );
@@ -157,6 +183,7 @@ export class Poker {
       value,
       selected: this.myVote() === value && !this.revealed(),
       joker: value === '?',
+      suit: typeof value === 'number' ? suitForValue(value) : null,
     }))
   );
 
@@ -167,9 +194,10 @@ export class Poker {
 
   readonly assignCards = computed<AssignCard[]>(() => {
     const suggested = suggestedEstimate(this.votes());
-    return FIBONACCI_DECK.filter((v): v is number => typeof v === 'number').map((value) => ({
+    return NUMERIC_DECK.map((value) => ({
       value,
       suggested: value === suggested,
+      suit: suitForValue(value),
     }));
   });
 }
