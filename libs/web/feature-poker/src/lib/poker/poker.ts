@@ -18,11 +18,13 @@ interface PlayerCard {
   shortName: string;
   face: string;
   state: PlayerCardState;
+  joker: boolean;
 }
 
 interface DeckCard {
   value: VoteValue;
   selected: boolean;
+  joker: boolean;
 }
 
 interface AssignCard {
@@ -141,6 +143,7 @@ export class Poker {
         shortName: p.id === this.currentPlayerId() ? 'You' : p.name.split(' ')[0],
         face,
         state,
+        joker: state === 'revealed' && face === '?',
       };
     })
   );
@@ -153,6 +156,7 @@ export class Poker {
     FIBONACCI_DECK.map((value) => ({
       value,
       selected: this.myVote() === value && !this.revealed(),
+      joker: value === '?',
     }))
   );
 

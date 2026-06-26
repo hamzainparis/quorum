@@ -492,4 +492,26 @@
     border: 1.5px solid #2b2440;
     border-radius: 8px;
   }
+
+  /* The "?" card stands in for the deck's Joker — printed stock gets a
+     two-tone jester treatment instead of the plain suit pips. */
+  .qrm-poker__deck-card--joker,
+  .qrm-poker__card--joker {
+    background: linear-gradient(165deg, #fff7e0 50%, #fdeef0 50%);
+    border-color: #b8472f;
+    color: #b8472f;
+
+    &::before,
+    &::after {
+      content: '🃏';
+      font-size: 10px;
+      opacity: 0.85;
+    }
+  }
+
+  .qrm-poker__deck-card--joker.qrm-poker__deck-card--selected {
+    background: linear-gradient(165deg, #fff0c2 50%, #ffd9de 50%);
+    border-color: #b8472f;
+    color: #8c2e1c;
+  }
 }
