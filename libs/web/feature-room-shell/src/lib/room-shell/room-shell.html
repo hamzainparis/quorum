@@ -1,0 +1,199 @@
+@if (!joined()) {
+  <qrm-lobby [roomCode]="roomCode()" />
+} @else if (snapshot(); as room) {
+  <div class="qrm-room">
+    <header class="qrm-room__header">
+      <div class="qrm-room__brand">
+        <div class="qrm-room__mark">
+          <div class="qrm-room__mark-chip"></div>
+        </div>
+        <div class="qrm-room__brand-text">
+          <span class="qrm-room__brand-name">Quorum</span>
+          <span class="qrm-room__brand-tag">Room {{ roomCode() }}</span>
+        </div>
+      </div>
+
+      <div class="qrm-room__spacer"></div>
+
+      <div class="qrm-room__role" [class.qrm-room__role--facilitator]="isFacilitator()">
+        @if (isFacilitator()) {
+          <span class="qrm-room__role-icon">★</span> Facilitator
+        } @else {
+          Participant
+        }
+      </div>
+
+      @if (!isFacilitator()) {
+        <button type="button" class="qrm-room__claim-btn" title="Become the facilitator" (click)="claimFacilitator()">
+          Take facilitator
+        </button>
+      }
+
+      <div class="qrm-room__avatars">
+        @for (p of avatarStack(); track p.id) {
+          <qrm-avatar class="qrm-room__avatar" [name]="p.name" [color]="p.color" size="sm" [bordered]="true" />
+        }
+        <div class="qrm-room__online">
+          <span class="qrm-room__online-dot"></span>{{ onlineCount() }} online
+        </div>
+      </div>
+
+      <button type="button" class="qrm-room__settings-btn" title="Project settings" (click)="openSettings()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      </button>
+
+      <qrm-button size="sm" (click)="copyInviteLink()">
+        {{ inviteCopied() ? 'Copied!' : 'Invite' }}
+      </qrm-button>
+    </header>
+
+    <div class="qrm-room__body">
+      <div class="qrm-room__panel" [class.qrm-room__panel--active]="activePanel() === 'board'">
+        <qrm-board
+          [tickets]="room.tickets"
+          [activeTicketId]="room.activeTicketId"
+          [isFacilitator]="isFacilitator()"
+          (selectTicket)="selectTicket($event)"
+          (reorderTickets)="reorderTickets($event)"
+          (openImport)="openImport()"
+          (openCreate)="openCreate()"
+          (setEstimate)="setEstimate($event)"
+        />
+      </div>
+
+      <div class="qrm-room__panel" [class.qrm-room__panel--active]="activePanel() === 'poker'">
+        <qrm-poker
+          [tickets]="room.tickets"
+          [activeTicketId]="room.activeTicketId"
+          [players]="room.players"
+          [votes]="room.votes"
+          [votedPlayerIds]="room.votedPlayerIds"
+          [revealed]="room.revealed"
+          [stats]="room.stats"
+          [currentPlayerId]="currentPlayerId"
+          [isFacilitator]="isFacilitator()"
+          (vote)="vote($event)"
+          (reveal)="reveal()"
+          (resetVotes)="resetVotes()"
+          (skip)="skip()"
+          (assignEstimate)="assignEstimate($event)"
+        />
+      </div>
+
+      <div class="qrm-room__panel" [class.qrm-room__panel--active]="activePanel() === 'chat'">
+        <qrm-chat
+          [messages]="room.chat"
+          [players]="room.players"
+          [currentPlayerId]="currentPlayerId"
+          [isFacilitator]="isFacilitator()"
+          [muted]="room.chatMuted"
+          (send)="sendChat($event)"
+          (toggleMute)="toggleMute()"
+        />
+      </div>
+    </div>
+
+    <nav class="qrm-room__tabbar">
+      @for (tab of tabs; track tab.key) {
+        <button
+          type="button"
+          class="qrm-room__tab"
+          [class.qrm-room__tab--active]="activePanel() === tab.key"
+          (click)="selectPanel(tab.key)"
+        >
+          <span class="qrm-room__tab-icon">{{ tab.icon }}</span>{{ tab.label }}
+        </button>
+      }
+    </nav>
+
+    @if (showImport()) {
+      <qrm-jira-import [roomCode]="roomCode()" [clientId]="currentPlayerId" [initialTab]="importInitialTab()" (closeImport)="closeImport()" />
+    }
+
+    <!-- ── Project Settings panel ─────────────────────────────── -->
+    @if (showSettings()) {
+      <div
+        class="qrm-settings__backdrop"
+        role="button"
+        tabindex="0"
+        aria-label="Close settings"
+        (click)="closeSettings()"
+        (keydown.enter)="closeSettings()"
+      ></div>
+
+      <div class="qrm-settings__shell">
+        <div class="qrm-settings__dialog" role="dialog" aria-modal="true" aria-labelledby="qrm-settings-title">
+          <div class="qrm-settings__header">
+            <h3 class="qrm-settings__title" id="qrm-settings-title">⚙ Project Settings</h3>
+            <button type="button" class="qrm-settings__close" aria-label="Close" (click)="closeSettings()">✕</button>
+          </div>
+
+          <div class="qrm-settings__body">
+            <p class="qrm-settings__section-label">Jira Connection</p>
+
+            <label class="qrm-settings__field">
+              <span class="qrm-settings__label">Site URL</span>
+              <input
+                class="qrm-settings__input"
+                [value]="settingsForm().jiraSiteUrl"
+                (input)="onSettingsInput('jiraSiteUrl', $event)"
+                placeholder="https://your-team.atlassian.net"
+              />
+            </label>
+
+            <div class="qrm-settings__row">
+              <label class="qrm-settings__field">
+                <span class="qrm-settings__label">Email</span>
+                <input
+                  class="qrm-settings__input"
+                  [value]="settingsForm().jiraEmail"
+                  (input)="onSettingsInput('jiraEmail', $event)"
+                  placeholder="you@company.com"
+                />
+              </label>
+              <label class="qrm-settings__field">
+                <span class="qrm-settings__label">API token</span>
+                <input
+                  class="qrm-settings__input"
+                  type="password"
+                  [value]="settingsForm().jiraApiToken"
+                  (input)="onSettingsInput('jiraApiToken', $event)"
+                  placeholder="••••••••••••"
+                />
+              </label>
+            </div>
+
+            <label class="qrm-settings__field">
+              <span class="qrm-settings__label">Default project key</span>
+              <input
+                class="qrm-settings__input"
+                [value]="settingsForm().jiraProjectKey"
+                (input)="onSettingsInput('jiraProjectKey', $event)"
+                placeholder="e.g. PROJ"
+              />
+            </label>
+
+            <p class="qrm-settings__hint">
+              Site URL, email and API token are kept in memory for this session only and are
+              never saved — you'll re-enter them next time. Only the default project key is
+              remembered in your browser.
+            </p>
+
+            <div class="qrm-settings__footer">
+              <qrm-button variant="secondary" (click)="closeSettings()">Cancel</qrm-button>
+              <qrm-button variant="primary" (click)="saveSettings()">
+                {{ settingsSaved() ? '✓ Saved' : 'Save settings' }}
+              </qrm-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+@if (errorMessage()) {
+  <div class="qrm-room__toast">⚠ {{ errorMessage() }}</div>
+}

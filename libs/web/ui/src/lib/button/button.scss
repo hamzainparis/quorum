@@ -1,0 +1,71 @@
+.qrm-btn {
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+}
+
+.qrm-btn--full {
+  width: 100%;
+}
+
+// sizes
+.qrm-btn--sm {
+  font-size: 11px;
+  padding: 5px 9px;
+  border-radius: 8px;
+}
+
+.qrm-btn--md {
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 10px;
+}
+
+.qrm-btn--lg {
+  font-size: 15px;
+  padding: 14px;
+  border-radius: 14px;
+}
+
+// variants
+.qrm-btn--primary {
+  background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+  color: #fff;
+  box-shadow: 0 6px 14px -6px rgba(109, 94, 246, 0.7);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+}
+
+.qrm-btn--secondary {
+  background: var(--qrm-panel-tint);
+  color: var(--qrm-text-5);
+
+  &:hover:not(:disabled) {
+    background: var(--qrm-panel-tint-hover);
+  }
+}
+
+.qrm-btn--ghost {
+  background: var(--qrm-surface);
+  color: var(--qrm-text-3);
+  border: 1.5px solid var(--qrm-border);
+
+  &:hover:not(:disabled) {
+    border-color: var(--qrm-border-hover);
+    box-shadow: 0 6px 16px -8px rgba(60, 40, 140, 0.4);
+    transform: translateY(-1px);
+  }
+}

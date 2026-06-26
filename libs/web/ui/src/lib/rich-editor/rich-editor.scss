@@ -1,0 +1,103 @@
+:host {
+  display: block;
+}
+
+.qrm-rich-editor {
+  border: 1.5px solid var(--qrm-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+
+  &:focus-within {
+    border-color: var(--qrm-violet);
+  }
+}
+
+.qrm-rich-editor__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  background: var(--qrm-panel-tint);
+  border-bottom: 1px solid var(--qrm-border-5);
+  flex-wrap: wrap;
+}
+
+.qrm-rich-editor__btn {
+  min-width: 28px;
+  height: 26px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--qrm-text-5);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  b, i, u { font-size: 13px; }
+
+  &:hover {
+    background: var(--qrm-panel-tint-hover);
+    color: var(--qrm-violet);
+  }
+}
+
+.qrm-rich-editor__sep {
+  width: 1px;
+  height: 18px;
+  background: var(--qrm-border-5);
+  margin: 0 4px;
+  flex: 0 0 auto;
+}
+
+.qrm-rich-editor__content {
+  min-height: 120px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 11px 13px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--qrm-text);
+  outline: none;
+  word-break: break-word;
+
+  // Placeholder
+  &.qrm-rich-editor__content--empty::before {
+    content: attr(data-placeholder);
+    color: var(--qrm-text-10);
+    pointer-events: none;
+    position: absolute;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--qrm-font-display);
+    font-weight: 700;
+    margin: 0.6em 0 0.3em;
+    &:first-child { margin-top: 0; }
+  }
+  h3 { font-size: 1.1em; }
+  h4 { font-size: 1em; }
+
+  p { margin: 0 0 0.5em; &:last-child { margin-bottom: 0; } }
+
+  ul, ol { margin: 0 0 0.5em 1.3em; padding: 0; }
+  li { margin-bottom: 0.2em; }
+
+  strong, b { font-weight: 700; }
+  em, i      { font-style: italic; }
+  u          { text-decoration: underline; }
+
+  code {
+    font-family: monospace;
+    font-size: 0.875em;
+    background: var(--qrm-panel-tint);
+    border-radius: 4px;
+    padding: 1px 4px;
+    color: var(--qrm-violet);
+  }
+}

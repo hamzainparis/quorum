@@ -1,0 +1,9 @@
+<button
+  type="button"
+  class="qrm-btn"
+  [class]="'qrm-btn--' + variant() + ' qrm-btn--' + size()"
+  [class.qrm-btn--full]="fullWidth()"
+  [disabled]="disabled()"
+>
+  <ng-content></ng-content>
+</button>

@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #ECEAF6; color: #1A1830; -webkit-font-smoothing: antialiased; }
+  input { font-family: inherit; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #C9C4E6; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  @keyframes qPop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes qFlip { 0% { transform: rotateY(90deg); opacity: 0; } 100% { transform: rotateY(0); opacity: 1; } }
+  @keyframes qFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+  @keyframes qPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(91,79,227,.45); } 50% { box-shadow: 0 0 0 10px rgba(91,79,227,0); } }
+  @keyframes qSlideUp { 0% { transform: translateY(12px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+  @keyframes qBlobA { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(40px,-30px) scale(1.15); } }
+  @keyframes qBlobB { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-50px,40px) scale(1.1); } }
+</style>
+</helmet>
+
+<div style="height:100vh;width:100%;overflow:hidden;position:relative;">
+
+<sc-if value="{{ isLobby }}" hint-placeholder-val="{{ true }}">
+  <div style="height:100vh;width:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(120% 120% at 80% 0%, #6D5EF6 0%, #4A3FD0 45%, #2E2480 100%);">
+    <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:rgba(255,107,87,.35);filter:blur(80px);top:-120px;left:-80px;animation:qBlobA 14s ease-in-out infinite;"></div>
+    <div style="position:absolute;width:480px;height:480px;border-radius:50%;background:rgba(56,224,201,.30);filter:blur(90px);bottom:-140px;right:-60px;animation:qBlobB 16s ease-in-out infinite;"></div>
+
+    <div style="position:relative;width:min(420px,90vw);background:rgba(255,255,255,.97);border-radius:28px;padding:40px 36px;box-shadow:0 40px 80px -20px rgba(20,12,60,.55);animation:qSlideUp .5s ease both;">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:26px;">
+        <div style="width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#6D5EF6,#FF6B57);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px -4px rgba(109,94,246,.6);">
+          <div style="width:16px;height:16px;border-radius:5px;background:#fff;transform:rotate(45deg);"></div>
+        </div>
+        <div>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:21px;letter-spacing:-.5px;line-height:1;">Quorum</div>
+          <div style="font-size:11px;color:#7A75A0;font-weight:600;letter-spacing:.3px;margin-top:2px;">SPRINT POKER · LIVE</div>
+        </div>
+      </div>
+
+      <h1 style="font-family:'Space Grotesk';font-weight:700;font-size:27px;line-height:1.15;letter-spacing:-.8px;margin:0 0 6px;">Join the planning room</h1>
+      <p style="margin:0 0 24px;color:#6E689A;font-size:14px;line-height:1.5;">No account needed — drop your name and start estimating with the team.</p>
+
+      <button onClick="{{ googleSignIn }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;background:#fff;border:1.5px solid #E2DFF0;border-radius:14px;padding:13px;font-size:14.5px;font-weight:600;color:#3C3766;cursor:pointer;transition:all .15s;" style-hover="border-color:#C3BCEA;box-shadow:0 6px 16px -8px rgba(60,40,140,.4);transform:translateY(-1px);">
+        <svg width="19" height="19" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.3 0-9.7-3.1-11.3-7.5l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4.1 5.6l6.2 5.2C39.8 36.5 44 31 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+        Continue with Google
+      </button>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:18px 0;">
+        <div style="flex:1;height:1px;background:#E8E5F3;"></div>
+        <span style="font-size:11.5px;color:#A8A3C4;font-weight:600;">OR</span>
+        <div style="flex:1;height:1px;background:#E8E5F3;"></div>
+      </div>
+
+      <label style="display:block;font-size:12.5px;font-weight:600;color:#5A5483;margin-bottom:7px;">Your display name</label>
+      <input value="{{ nameDraft }}" onInput="{{ onNameInput }}" onKeyDown="{{ onNameKey }}" placeholder="e.g. Jordan Lee" style="width:100%;border:1.5px solid #E2DFF0;border-radius:14px;padding:13px 14px;font-size:15px;color:#1A1830;outline:none;margin-bottom:18px;transition:border-color .15s;" style-focus="border-color:#6D5EF6;" />
+
+      <button onClick="{{ join }}" style="width:100%;background:linear-gradient(135deg,#6D5EF6,#5B4FE3);border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 12px 24px -8px rgba(91,79,227,.7);transition:transform .12s;" style-hover="transform:translateY(-1px);" style-active="transform:translateY(0);">Enter room →</button>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:20px;font-size:12px;color:#8B86AD;">
+        <span style="display:inline-flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:#38E0C9;box-shadow:0 0 0 3px rgba(56,224,201,.25);"></span>SPR-24 · Q3 Velocity</span>
+        <span style="opacity:.5;">·</span>
+        <span>{{ lobbyOnline }} online</span>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ isRoom }}" hint-placeholder-val="{{ false }}">
+  <div style="height:100vh;width:100%;display:flex;flex-direction:column;background:#ECEAF6;">
+
+    <!-- HEADER -->
+    <header style="flex:0 0 auto;height:62px;display:flex;align-items:center;gap:14px;padding:0 18px;background:#fff;border-bottom:1px solid #E4E1F2;z-index:20;box-shadow:0 1px 0 rgba(20,12,60,.02);">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#6D5EF6,#FF6B57);display:flex;align-items:center;justify-content:center;">
+          <div style="width:13px;height:13px;border-radius:4px;background:#fff;transform:rotate(45deg);"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;line-height:1;">
+          <span style="font-family:'Space Grotesk';font-weight:700;font-size:16px;letter-spacing:-.4px;">Quorum</span>
+          <span style="font-size:10.5px;color:#8B86AD;font-weight:600;margin-top:3px;">SPR-24 · Q3 Velocity</span>
+        </div>
+      </div>
+
+      <div style="flex:1;"></div>
+
+      <!-- role switch -->
+      <div style="display:flex;background:#F0EEF9;border-radius:11px;padding:3px;gap:2px;">
+        <button onClick="{{ setFacilitator }}" style="border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:9px;display:flex;align-items:center;gap:6px;transition:all .15s;background:{{ facTabBg }};color:{{ facTabColor }};box-shadow:{{ facTabShadow }};">
+          <span style="font-size:13px;">★</span> Facilitator
+        </button>
+        <button onClick="{{ setParticipant }}" style="border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:12.5px;padding:7px 13px;border-radius:9px;transition:all .15s;background:{{ partTabBg }};color:{{ partTabColor }};box-shadow:{{ partTabShadow }};">Participant</button>
+      </div>
+
+      <!-- avatar stack -->
+      <div style="display:flex;align-items:center;">
+        <sc-for list="{{ avatarStack }}" as="a" hint-placeholder-count="4">
+          <div title="{{ a.name }}" style="width:32px;height:32px;border-radius:50%;background:{{ a.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;border:2.5px solid #fff;margin-left:-9px;font-family:'Space Grotesk';">{{ a.initials }}</div>
+        </sc-for>
+        <div style="margin-left:10px;font-size:12.5px;color:#6E689A;font-weight:600;display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:50%;background:#38E0C9;"></span>{{ onlineCount }} online</div>
+      </div>
+
+      <button style="background:#6D5EF6;border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;padding:9px 15px;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 6px 14px -6px rgba(109,94,246,.7);" style-hover="background:#5B4FE3;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v13"/></svg>
+        Invite
+      </button>
+    </header>
+
+    <!-- BODY -->
+    <div style="flex:1;min-height:0;display:grid;grid-template-columns:{{ gridCols }};gap:{{ gridGap }};padding:{{ bodyPad }};">
+
+      <!-- BOARD PANEL -->
+      <sc-if value="{{ showBoard }}" hint-placeholder-val="{{ true }}">
+      <aside style="background:#fff;border-radius:18px;border:1px solid #E7E4F3;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+        <div style="flex:0 0 auto;padding:16px 16px 12px;border-bottom:1px solid #F0EEF8;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:14.5px;margin:0;letter-spacing:-.2px;">Sprint Backlog</h2>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <button onClick="{{ openImport }}" title="Import backlog from Jira" style="display:flex;align-items:center;gap:5px;background:#F0EEF9;border:none;border-radius:8px;color:#5A5483;font-weight:700;font-size:11px;padding:5px 9px;cursor:pointer;transition:all .15s;" style-hover="background:#E7E3F5;color:#6D5EF6;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 20h16"/></svg>
+                Import
+              </button>
+              <span style="font-size:11px;font-weight:700;color:#6D5EF6;background:#F0EEFb;padding:4px 9px;border-radius:7px;">{{ pointsDone }} pts</span>
+            </div>
+          </div>
+          <div style="height:6px;background:#EFEDF8;border-radius:6px;margin-top:11px;overflow:hidden;">
+            <div style="height:100%;width:{{ progressPct }};background:linear-gradient(90deg,#6D5EF6,#38E0C9);border-radius:6px;transition:width .5s;"></div>
+          </div>
+          <div style="font-size:11px;color:#8B86AD;margin-top:7px;font-weight:600;">{{ estimatedCount }} of {{ ticketCount }} estimated</div>
+        </div>
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="5">
+            <div onClick="{{ t.select }}" style="border:1.5px solid {{ t.borderColor }};background:{{ t.bg }};border-radius:13px;padding:12px;cursor:pointer;transition:all .15s;position:relative;" style-hover="border-color:#C3BCEA;transform:translateX(2px);">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+                <span style="width:16px;height:16px;border-radius:5px;background:{{ t.typeColor }};display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:800;">{{ t.typeIcon }}</span>
+                <span style="font-size:11px;font-weight:700;color:#8B86AD;font-family:'Space Grotesk';">{{ t.key }}</span>
+                <span style="font-size:9.5px;font-weight:700;color:{{ t.prioColor }};background:{{ t.prioBg }};padding:2px 6px;border-radius:5px;">{{ t.priority }}</span>
+                <div style="flex:1;"></div>
+                <span style="min-width:24px;height:24px;padding:0 6px;border-radius:8px;background:{{ t.estBg }};color:{{ t.estColor }};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12.5px;font-family:'Space Grotesk';">{{ t.estimateDisplay }}</span>
+              </div>
+              <div style="font-size:13px;font-weight:600;line-height:1.35;color:#2A2550;">{{ t.title }}</div>
+              <sc-if value="{{ t.isActive }}" hint-placeholder-val="{{ false }}">
+                <div style="display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:10.5px;font-weight:700;color:#6D5EF6;">
+                  <span style="width:7px;height:7px;border-radius:50%;background:#6D5EF6;animation:qPulse 1.6s infinite;"></span>VOTING NOW
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </aside>
+      </sc-if>
+
+      <!-- POKER STAGE -->
+      <sc-if value="{{ showPoker }}" hint-placeholder-val="{{ true }}">
+      <main style="background:linear-gradient(180deg,#fff,#FAF9FE);border-radius:18px;border:1px solid #E7E4F3;display:flex;flex-direction:column;min-height:0;overflow:hidden;position:relative;">
+        <!-- active ticket bar -->
+        <div style="flex:0 0 auto;padding:16px 22px;border-bottom:1px solid #F0EEF8;display:flex;align-items:center;gap:13px;">
+          <span style="font-size:11.5px;font-weight:800;color:#fff;background:{{ activeTicket.typeColor }};padding:5px 9px;border-radius:7px;font-family:'Space Grotesk';">{{ activeTicket.key }}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15.5px;font-weight:700;color:#1A1830;line-height:1.25;letter-spacing:-.2px;">{{ activeTicket.title }}</div>
+            <div style="font-size:12px;color:#8B86AD;margin-top:3px;font-weight:500;">{{ activeTicket.desc }}</div>
+          </div>
+          <span style="font-size:11px;font-weight:700;color:{{ activeTicket.prioColor }};background:{{ activeTicket.prioBg }};padding:5px 10px;border-radius:8px;white-space:nowrap;">{{ activeTicket.priority }}</span>
+        </div>
+
+        <!-- table -->
+        <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative;">
+          <!-- players ring -->
+          <div style="display:flex;flex-wrap:wrap;gap:18px;justify-content:center;max-width:560px;margin-bottom:26px;">
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:8px;width:74px;animation:qPop .4s ease both;">
+                <div style="width:56px;height:78px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:24px;transition:all .3s;position:relative;background:{{ p.cardBg }};color:{{ p.cardColor }};border:2px solid {{ p.cardBorder }};box-shadow:{{ p.cardShadow }};">
+                  <span style="animation:{{ p.flipAnim }};">{{ p.cardFace }}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;max-width:74px;">
+                  <div style="width:18px;height:18px;border-radius:50%;background:{{ p.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;flex:0 0 auto;font-family:'Space Grotesk';">{{ p.initials }}</div>
+                  <span style="font-size:11.5px;font-weight:600;color:#4A4570;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.shortName }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- result / status -->
+          <sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:14px;align-items:stretch;animation:qSlideUp .4s ease both;">
+              <div style="background:#fff;border:1.5px solid #E7E4F3;border-radius:15px;padding:14px 22px;text-align:center;min-width:96px;">
+                <div style="font-size:10.5px;font-weight:700;color:#8B86AD;letter-spacing:.4px;">AVERAGE</div>
+                <div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#6D5EF6;line-height:1.1;margin-top:3px;">{{ stats.avg }}</div>
+              </div>
+              <div style="background:{{ stats.consensusBg }};border:1.5px solid {{ stats.consensusBorder }};border-radius:15px;padding:14px 22px;text-align:center;display:flex;flex-direction:column;justify-content:center;min-width:140px;">
+                <div style="font-size:10.5px;font-weight:700;color:{{ stats.consensusColor }};letter-spacing:.4px;">{{ stats.consensusLabel }}</div>
+                <div style="font-size:15px;font-weight:700;color:{{ stats.consensusColor }};margin-top:4px;">{{ stats.consensusText }}</div>
+              </div>
+              <div style="background:#fff;border:1.5px solid #E7E4F3;border-radius:15px;padding:14px 22px;text-align:center;min-width:96px;">
+                <div style="font-size:10.5px;font-weight:700;color:#8B86AD;letter-spacing:.4px;">SPREAD</div>
+                <div style="font-family:'Space Grotesk';font-weight:700;font-size:30px;color:#FF6B57;line-height:1.1;margin-top:3px;">{{ stats.spread }}</div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ showWaiting }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:9px;color:#8B86AD;font-size:13px;font-weight:600;animation:qFloat 3s ease-in-out infinite;">
+              <span style="width:9px;height:9px;border-radius:50%;background:#6D5EF6;animation:qPulse 1.6s infinite;"></span>
+              {{ waitingText }}
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- DECK + CONTROLS -->
+        <div style="flex:0 0 auto;border-top:1px solid #F0EEF8;background:#fff;padding:15px 18px;">
+          <sc-if value="{{ showDeck }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px;flex-wrap:wrap;">
+              <span style="font-size:12px;font-weight:700;color:#5A5483;">{{ deckLabel }}</span>
+              <span style="font-size:11.5px;color:#8B86AD;font-weight:600;">{{ votedCount }}/{{ voterCount }} voted</span>
+            </div>
+            <div style="display:flex;gap:9px;justify-content:center;flex-wrap:wrap;">
+              <sc-for list="{{ deck }}" as="c" hint-placeholder-count="8">
+                <button onClick="{{ c.cast }}" style="width:46px;height:64px;border-radius:11px;font-family:'Space Grotesk';font-weight:700;font-size:19px;cursor:pointer;transition:all .15s;background:{{ c.bg }};color:{{ c.color }};border:2px solid {{ c.border }};box-shadow:{{ c.shadow }};transform:{{ c.transform }};" style-hover="transform:translateY(-6px);">{{ c.value }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- facilitator controls -->
+          <sc-if value="{{ isFacilitator }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:9px;justify-content:center;margin-top:13px;padding-top:13px;border-top:1px dashed #ECEAF6;flex-wrap:wrap;align-items:center;">
+              <span style="font-size:10.5px;font-weight:800;color:#FF6B57;letter-spacing:.5px;display:flex;align-items:center;gap:5px;"><span style="font-size:12px;">★</span>FACILITATOR</span>
+              <sc-if value="{{ canReveal }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ reveal }}" style="background:linear-gradient(135deg,#6D5EF6,#5B4FE3);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:13px;padding:9px 18px;cursor:pointer;box-shadow:0 6px 14px -6px rgba(109,94,246,.7);" style-hover="transform:translateY(-1px);">Reveal votes</button>
+              </sc-if>
+              <sc-if value="{{ showAssign }}" hint-placeholder-val="{{ false }}">
+                <span style="font-size:12px;font-weight:700;color:#5A5483;">Assign:</span>
+                <sc-for list="{{ assignCards }}" as="a" hint-placeholder-count="4">
+                  <button onClick="{{ a.assign }}" style="min-width:36px;height:36px;padding:0 8px;border-radius:9px;font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;background:{{ a.bg }};color:{{ a.color }};border:2px solid {{ a.border }};" style-hover="border-color:#6D5EF6;">{{ a.value }}</button>
+                </sc-for>
+              </sc-if>
+              <button onClick="{{ reset }}" style="background:#F0EEF9;border:none;border-radius:10px;color:#5A5483;font-weight:700;font-size:13px;padding:9px 15px;cursor:pointer;" style-hover="background:#E7E3F5;">↺ Reset</button>
+              <button onClick="{{ skip }}" style="background:#F0EEF9;border:none;border-radius:10px;color:#5A5483;font-weight:700;font-size:13px;padding:9px 15px;cursor:pointer;" style-hover="background:#E7E3F5;">Skip →</button>
+            </div>
+          </sc-if>
+        </div>
+      </main>
+      </sc-if>
+
+      <!-- CHAT PANEL -->
+      <sc-if value="{{ showChat }}" hint-placeholder-val="{{ true }}">
+      <aside style="background:#fff;border-radius:18px;border:1px solid #E7E4F3;display:flex;flex-direction:column;min-height:0;overflow:hidden;">
+        <div style="flex:0 0 auto;padding:15px 16px;border-bottom:1px solid #F0EEF8;display:flex;align-items:center;justify-content:space-between;">
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:14.5px;margin:0;display:flex;align-items:center;gap:7px;">Team Chat <span style="width:7px;height:7px;border-radius:50%;background:#38E0C9;"></span></h2>
+          <sc-if value="{{ isFacilitator }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleMute }}" title="Mute chat for participants" style="background:{{ muteBg }};border:none;border-radius:8px;color:{{ muteColor }};font-weight:700;font-size:11px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:5px;">{{ muteLabel }}</button>
+          </sc-if>
+        </div>
+        <div ref="{{ chatScrollRef }}" style="flex:1;min-height:0;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:11px;">
+          <sc-for list="{{ chat }}" as="m" hint-placeholder-count="5">
+            <sc-if value="{{ m.isSystem }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:center;font-size:11px;font-weight:600;color:#A29DBF;background:#F4F2FB;padding:5px 12px;border-radius:20px;">{{ m.text }}</div>
+            </sc-if>
+            <sc-if value="{{ m.isNormal }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:9px;align-items:flex-start;flex-direction:{{ m.dir }};">
+                <div style="width:28px;height:28px;border-radius:50%;background:{{ m.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:0 0 auto;font-family:'Space Grotesk';">{{ m.initials }}</div>
+                <div style="max-width:74%;">
+                  <div style="font-size:10.5px;font-weight:700;color:#8B86AD;margin-bottom:3px;text-align:{{ m.textAlign }};">{{ m.name }}</div>
+                  <div style="font-size:13px;line-height:1.4;padding:8px 11px;border-radius:13px;background:{{ m.bubbleBg }};color:{{ m.bubbleColor }};border-{{ m.notchSide }}-radius:4px;">{{ m.text }}</div>
+                </div>
+              </div>
+            </sc-if>
+          </sc-for>
+        </div>
+        <div style="flex:0 0 auto;padding:12px;border-top:1px solid #F0EEF8;">
+          <sc-if value="{{ chatLocked }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:center;gap:7px;color:#A29DBF;font-size:12.5px;font-weight:600;padding:9px;background:#F4F2FB;border-radius:12px;">🔒 Chat muted by facilitator</div>
+          </sc-if>
+          <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input value="{{ chatDraft }}" onInput="{{ onChatInput }}" onKeyDown="{{ onChatKey }}" placeholder="Message the team…" style="flex:1;border:1.5px solid #E2DFF0;border-radius:12px;padding:11px 13px;font-size:13.5px;outline:none;color:#1A1830;transition:border-color .15s;" style-focus="border-color:#6D5EF6;" />
+              <button onClick="{{ sendChat }}" style="width:42px;height:42px;border-radius:12px;background:#6D5EF6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:0 6px 14px -6px rgba(109,94,246,.7);" style-hover="background:#5B4FE3;">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </div>
+          </sc-if>
+        </div>
+      </aside>
+      </sc-if>
+    </div>
+
+    <!-- JIRA IMPORT MODAL -->
+    <sc-if value="{{ showImport }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeImport }}" style="position:absolute;inset:0;background:rgba(20,12,60,.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;animation:qSlideUp .25s ease both;">
+        <div onClick="{{ stop }}" style="background:#fff;border-radius:22px;width:min(560px,95vw);max-height:90vh;overflow-y:auto;box-shadow:0 40px 90px -20px rgba(20,12,60,.6);">
+          <div style="padding:22px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+            <div style="display:flex;align-items:center;gap:11px;">
+              <div style="width:38px;height:38px;border-radius:11px;background:#F0EEFb;display:flex;align-items:center;justify-content:center;color:#6D5EF6;flex:0 0 auto;">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              </div>
+              <div>
+                <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:0;letter-spacing:-.3px;">Import backlog from Jira</h3>
+                <p style="margin:3px 0 0;font-size:12.5px;color:#8B86AD;font-weight:500;">Upload a CSV export or paste REST API JSON</p>
+              </div>
+            </div>
+            <button onClick="{{ closeImport }}" style="width:30px;height:30px;border-radius:9px;border:none;background:#F4F2FB;color:#8B86AD;font-size:17px;cursor:pointer;flex:0 0 auto;line-height:1;" style-hover="background:#ECEAF6;">✕</button>
+          </div>
+
+          <div style="padding:18px 24px 24px;">
+            <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:2px dashed {{ dropBorder }};background:{{ dropBg }};border-radius:15px;padding:24px;cursor:pointer;text-align:center;transition:all .15s;" style-hover="border-color:#6D5EF6;background:#FAF9FE;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A29DBF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+              <div style="font-size:13.5px;font-weight:700;color:{{ dropTextColor }};">{{ dropTitle }}</div>
+              <div style="font-size:11.5px;color:#A29DBF;font-weight:500;">.csv or .json · Jira issue export</div>
+              <input type="file" accept=".csv,.json,text/csv,application/json" onChange="{{ onImportFile }}" style="display:none;" />
+            </label>
+
+            <div style="display:flex;align-items:center;gap:12px;margin:16px 0;">
+              <div style="flex:1;height:1px;background:#EFEDF8;"></div>
+              <span style="font-size:11px;color:#A8A3C4;font-weight:700;">OR PASTE</span>
+              <div style="flex:1;height:1px;background:#EFEDF8;"></div>
+            </div>
+
+            <textarea value="{{ importText }}" onInput="{{ onImportText }}" placeholder="Issue key,Summary,Issue Type,Priority,Story Points&#10;SPR-201,Add dark mode,Story,High,5&#10;SPR-202,Fix login redirect,Bug,Medium,2&#10;&#10;…or paste { &quot;issues&quot;: [ … ] } from the Jira REST API" style="width:100%;min-height:120px;border:1.5px solid #E2DFF0;border-radius:13px;padding:12px 13px;font-size:12.5px;font-family:ui-monospace,'SF Mono',Menlo,monospace;line-height:1.5;color:#2A2550;outline:none;resize:vertical;transition:border-color .15s;" style-focus="border-color:#6D5EF6;"></textarea>
+
+            <div style="font-size:11px;color:#A29DBF;font-weight:500;margin-top:9px;line-height:1.5;">Recognises Jira CSV columns (Issue key, Summary, Issue Type, Priority, Story Points) and REST API JSON. Existing backlog is replaced.</div>
+
+            <sc-if value="{{ hasImportError }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:12px;font-size:12.5px;font-weight:600;color:#E04F4F;background:#FDECEC;border-radius:11px;padding:10px 13px;display:flex;align-items:center;gap:7px;">⚠ {{ importError }}</div>
+            </sc-if>
+
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+              <button onClick="{{ closeImport }}" style="background:#F0EEF9;border:none;border-radius:12px;color:#5A5483;font-weight:700;font-size:13.5px;padding:11px 18px;cursor:pointer;" style-hover="background:#E7E3F5;">Cancel</button>
+              <button onClick="{{ doImport }}" style="background:linear-gradient(135deg,#6D5EF6,#5B4FE3);border:none;border-radius:12px;color:#fff;font-weight:700;font-size:13.5px;padding:11px 20px;cursor:pointer;box-shadow:0 8px 18px -8px rgba(109,94,246,.7);" style-hover="transform:translateY(-1px);">Import backlog</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MOBILE TAB BAR -->
+    <sc-if value="{{ isNarrow }}" hint-placeholder-val="{{ false }}">
+      <nav style="flex:0 0 auto;display:flex;background:#fff;border-top:1px solid #E4E1F2;padding:6px;gap:4px;">
+        <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
+          <button onClick="{{ tab.select }}" style="flex:1;border:none;background:{{ tab.bg }};color:{{ tab.color }};font-family:inherit;font-weight:700;font-size:12px;padding:10px;border-radius:11px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;">
+            <span style="font-size:16px;">{{ tab.icon }}</span>{{ tab.label }}
+          </button>
+        </sc-for>
+      </nav>
+    </sc-if>
+
+  </div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const palette = ['#6D5EF6','#FF6B57','#38B6A0','#F2A03D','#E45C9A','#3D8BF2'];
+    this.state = {
+      screen: 'lobby',
+      nameDraft: '',
+      role: 'facilitator',
+      players: [
+        { id: 'you',   name: 'You',          color: '#6D5EF6', isBot: false },
+        { id: 'maya',  name: 'Maya Chen',     color: '#FF6B57', isBot: true },
+        { id: 'devon', name: 'Devon Okafor',  color: '#38B6A0', isBot: true },
+        { id: 'priya', name: 'Priya Nair',    color: '#F2A03D', isBot: true },
+        { id: 'sam',   name: 'Sam Rivera',    color: '#E45C9A', isBot: true },
+        { id: 'leo',   name: 'Leo Schmidt',   color: '#3D8BF2', isBot: true },
+      ],
+      tickets: [
+        { id:'t1', key:'SPR-101', type:'story', title:'OAuth login with Google & GitHub', desc:'Add social sign-in to the auth flow', priority:'High', estimate:5, base:5 },
+        { id:'t2', key:'SPR-102', type:'story', title:'Real-time vote sync across clients', desc:'WebSocket layer for live estimation', priority:'High', estimate:null, base:8 },
+        { id:'t3', key:'SPR-103', type:'bug',   title:'Chat scroll jumps on new message', desc:'Auto-scroll only when pinned to bottom', priority:'Med', estimate:null, base:2 },
+        { id:'t4', key:'SPR-104', type:'task',  title:'Migrate session store to Redis', desc:'Move ephemeral room state off memory', priority:'Med', estimate:null, base:5 },
+        { id:'t5', key:'SPR-105', type:'story', title:'Facilitator handoff controls', desc:'Pass the star to another participant', priority:'Low', estimate:null, base:3 },
+        { id:'t6', key:'SPR-106', type:'bug',   title:'Reveal animation drops frames on Safari', desc:'GPU-composite the card flip', priority:'Low', estimate:null, base:2 },
+      ],
+      activeId: 't2',
+      votes: {},
+      revealed: false,
+      chat: [
+        { id:1, who:'devon', text:'Morning team 👋 ready when you are', system:false },
+        { id:2, who:'sys',   text:'Maya joined the room', system:true },
+        { id:3, who:'maya',  text:'Quick one — does 102 include reconnection handling?', system:false },
+      ],
+      chatDraft: '',
+      chatMuted: false,
+      width: typeof window !== 'undefined' ? window.innerWidth : 1280,
+      activePanel: 'poker',
+      showImport: false,
+      importText: '',
+      importError: '',
+      importFileName: '',
+    };
+    this._chatId = 100;
+    this._botTimers = [];
+    this.chatScrollRef = React.createRef();
+    this.deckVals = [1,2,3,5,8,13,21,'?'];
+  }
+
+  componentDidMount() {
+    this._onResize = () => this.setState({ width: window.innerWidth });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    this._clearBots();
+  }
+  componentDidUpdate() {
+    if (this._lastChatLen !== this.state.chat.length && this.chatScrollRef.current) {
+      this._lastChatLen = this.state.chat.length;
+      const el = this.chatScrollRef.current;
+      el.scrollTop = el.scrollHeight;
+    }
+  }
+
+  _clearBots() { this._botTimers.forEach(clearTimeout); this._botTimers = []; }
+
+  _scheduleBots() {
+    this._clearBots();
+    const ticket = this.state.tickets.find(t => t.id === this.state.activeId);
+    if (!ticket) return;
+    const near = (base) => {
+      const opts = this.deckVals.filter(v => typeof v === 'number');
+      const idx = opts.indexOf(base);
+      const choices = [opts[Math.max(0,idx-1)], base, base, opts[Math.min(opts.length-1,idx+1)]];
+      return choices[Math.floor(Math.random()*choices.length)];
+    };
+    this.state.players.filter(p => p.isBot).forEach(bot => {
+      const delay = 900 + Math.random()*3200;
+      const tm = setTimeout(() => {
+        this.setState(s => {
+          if (s.revealed) return null;
+          return { votes: { ...s.votes, [bot.id]: near(ticket.base) } };
+        });
+      }, delay);
+      this._botTimers.push(tm);
+    });
+  }
+
+  initials(name) {
+    return name.split(' ').filter(Boolean).slice(0,2).map(w => w[0].toUpperCase()).join('');
+  }
+
+  // ---- lobby ----
+  onNameInput = (e) => this.setState({ nameDraft: e.target.value });
+  onNameKey = (e) => { if (e.key === 'Enter') this.join(); };
+  join = () => {
+    const nm = (this.state.nameDraft || '').trim() || 'Guest';
+    this.setState(s => ({
+      screen: 'room',
+      players: s.players.map(p => p.id === 'you' ? { ...p, name: nm } : p),
+    }), () => this._scheduleBots());
+  };
+  googleSignIn = () => {
+    this.setState(s => ({
+      screen: 'room', nameDraft: 'Alex Rivera',
+      players: s.players.map(p => p.id === 'you' ? { ...p, name: 'Alex Rivera' } : p),
+    }), () => this._scheduleBots());
+  };
+
+  // ---- role ----
+  setFacilitator = () => this.setState({ role: 'facilitator' });
+  setParticipant = () => this.setState({ role: 'participant' });
+
+  // ---- poker ----
+  selectTicket = (id) => {
+    if (this.state.role !== 'facilitator') return;
+    this.setState({ activeId: id, votes: {}, revealed: false }, () => this._scheduleBots());
+    this._sys(`Now estimating ${this.state.tickets.find(t=>t.id===id).key}`);
+  };
+  castVote = (val) => {
+    if (this.state.revealed) return;
+    this.setState(s => ({ votes: { ...s.votes, you: val } }));
+  };
+  reveal = () => { this._clearBots(); this.setState({ revealed: true }); };
+  reset = () => this.setState({ votes: {}, revealed: false }, () => this._scheduleBots());
+  skip = () => this._advance(null);
+  assignEstimate = (val) => this._advance(val);
+
+  _advance(estimate) {
+    this.setState(s => {
+      let tickets = s.tickets;
+      if (estimate != null) {
+        tickets = tickets.map(t => t.id === s.activeId ? { ...t, estimate } : t);
+      }
+      const order = tickets;
+      const curIdx = order.findIndex(t => t.id === s.activeId);
+      let next = order.slice(curIdx+1).find(t => t.estimate == null) || order.find(t => t.estimate == null);
+      const nextId = next ? next.id : s.activeId;
+      return { tickets, activeId: nextId, votes: {}, revealed: false };
+    }, () => {
+      this._scheduleBots();
+      if (estimate != null) this._sys(`Estimate set · advancing`);
+    });
+  }
+
+  // ---- chat ----
+  toggleMute = () => this.setState(s => ({ chatMuted: !s.chatMuted }));
+  onChatInput = (e) => this.setState({ chatDraft: e.target.value });
+  onChatKey = (e) => { if (e.key === 'Enter') this.sendChat(); };
+  _sys(text) { this.setState(s => ({ chat: [...s.chat, { id: ++this._chatId, who:'sys', text, system:true }] })); }
+  sendChat = () => {
+    const txt = (this.state.chatDraft || '').trim();
+    if (!txt) return;
+    this.setState(s => ({ chat: [...s.chat, { id: ++this._chatId, who:'you', text: txt, system:false }], chatDraft: '' }));
+    if (Math.random() < 0.6) {
+      const replies = ['Good point 👍','Agreed.','Yeah let\u2019s go with that.','Hmm, slightly higher imo.','Makes sense to me.','+1','Can we split that ticket?'];
+      const bots = this.state.players.filter(p => p.isBot);
+      const bot = bots[Math.floor(Math.random()*bots.length)];
+      setTimeout(() => this.setState(s => ({ chat: [...s.chat, { id: ++this._chatId, who: bot.id, text: replies[Math.floor(Math.random()*replies.length)], system:false }] })), 1200 + Math.random()*1400);
+    }
+  };
+
+  // ---- Jira import ----
+  openImport = () => this.setState({ showImport: true, importError: '' });
+  closeImport = () => this.setState({ showImport: false });
+  stop = (e) => e.stopPropagation();
+  onImportText = (e) => this.setState({ importText: e.target.value, importError: '' });
+  onImportFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => this.setState({ importText: String(reader.result || ''), importFileName: f.name, importError: '' });
+    reader.onerror = () => this.setState({ importError: 'Could not read that file.' });
+    reader.readAsText(f);
+  };
+  doImport = () => {
+    const raw = (this.state.importText || '').trim();
+    if (!raw) { this.setState({ importError: 'Upload a file or paste Jira data first.' }); return; }
+    let tickets;
+    try { tickets = this._parseJira(raw); }
+    catch (err) { this.setState({ importError: (err && err.message) || 'Could not parse that data.' }); return; }
+    if (!tickets || !tickets.length) { this.setState({ importError: 'No issues found in that data.' }); return; }
+    const firstUn = tickets.find(t => t.estimate == null) || tickets[0];
+    this.setState({ tickets, activeId: firstUn.id, votes: {}, revealed: false, showImport: false, importText: '', importFileName: '' },
+      () => this._scheduleBots());
+    this._sys('Imported ' + tickets.length + ' issue' + (tickets.length === 1 ? '' : 's') + ' from Jira');
+  };
+
+  _parseJira(raw) {
+    const first = raw[0];
+    if (first === '{' || first === '[') {
+      let data;
+      try { data = JSON.parse(raw); } catch (e) { throw new Error('Invalid JSON — check the export.'); }
+      const issues = Array.isArray(data) ? data : (data.issues || data.results || []);
+      if (!Array.isArray(issues)) throw new Error('JSON has no "issues" array.');
+      return issues.map((it, i) => this._mapIssue(it, i));
+    }
+    const rows = this._parseCSV(raw);
+    if (!rows.length) throw new Error('No data rows found in the CSV.');
+    return rows.map((r, i) => this._mapRow(r, i));
+  }
+
+  _mapIssue(it, i) {
+    const f = (it && it.fields) || it || {};
+    const key = it.key || f.key || ('IMP-' + (i + 1));
+    const summary = f.summary || it.summary || 'Untitled issue';
+    const type = (f.issuetype && f.issuetype.name) || f.issueType || it.type || 'Story';
+    const prio = (f.priority && f.priority.name) || f.priority || it.priority || 'Medium';
+    let sp = f.storyPoints;
+    if (sp == null) sp = f['Story Points'];
+    if (sp == null) sp = f.customfield_10016;
+    if (sp == null) sp = f.customfield_10026;
+    if (sp == null) sp = it.estimate;
+    return this._buildTicket(key, summary, type, prio, sp, i);
+  }
+
+  _mapRow(r, i) {
+    const keys = Object.keys(r);
+    const get = (...names) => {
+      for (const n of names) { const k = keys.find(k => k.trim().toLowerCase() === n.toLowerCase()); if (k && r[k] !== '') return r[k]; }
+      for (const n of names) { const k = keys.find(k => k.trim().toLowerCase().includes(n.toLowerCase())); if (k && r[k] !== '') return r[k]; }
+      return '';
+    };
+    const key = get('Issue key', 'Key', 'Issue id') || ('IMP-' + (i + 1));
+    const summary = get('Summary', 'Title', 'Name') || 'Untitled issue';
+    const type = get('Issue Type', 'Issuetype', 'Type') || 'Story';
+    const prio = get('Priority') || 'Medium';
+    const sp = get('Story Points', 'Story point estimate', 'Story Point', 'Estimate');
+    return this._buildTicket(key, summary, type, prio, sp === '' ? null : sp, i);
+  }
+
+  _buildTicket(key, summary, typeRaw, prioRaw, sp, i) {
+    const tl = String(typeRaw || '').toLowerCase();
+    let type = 'story';
+    if (tl.includes('bug') || tl.includes('defect')) type = 'bug';
+    else if (tl.includes('task') || tl.includes('sub') || tl.includes('chore')) type = 'task';
+    const pl = String(prioRaw || '').toLowerCase();
+    let priority = 'Med';
+    if (pl.includes('high') || pl.includes('critical') || pl.includes('blocker') || pl.includes('urgent')) priority = 'High';
+    else if (pl.includes('low') || pl.includes('trivial') || pl.includes('minor')) priority = 'Low';
+    const n = Number(sp);
+    const estimate = (sp == null || sp === '' || isNaN(n)) ? null : n;
+    const fibs = [1, 2, 3, 5, 8, 13, 21];
+    const base = estimate != null
+      ? fibs.reduce((a, b) => Math.abs(b - estimate) < Math.abs(a - estimate) ? b : a)
+      : fibs[Math.floor(Math.random() * 5) + 1];
+    return {
+      id: 'imp' + i + '_' + (Date.now() % 100000),
+      key: String(key).trim(),
+      type,
+      title: String(summary).trim(),
+      desc: 'Imported from Jira',
+      priority,
+      estimate,
+      base,
+    };
+  }
+
+  _parseCSV(text) {
+    const lines = []; let cur = []; let field = ''; let inQ = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (inQ) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQ = false; }
+        else field += c;
+      } else {
+        if (c === '"') inQ = true;
+        else if (c === ',') { cur.push(field); field = ''; }
+        else if (c === '\n' || c === '\r') {
+          if (c === '\r' && text[i + 1] === '\n') i++;
+          cur.push(field); field = '';
+          if (cur.length > 1 || (cur[0] || '').trim() !== '') lines.push(cur);
+          cur = [];
+        } else field += c;
+      }
+    }
+    if (field !== '' || cur.length) { cur.push(field); lines.push(cur); }
+    if (lines.length < 2) return [];
+    const headers = lines[0].map(h => h.trim());
+    return lines.slice(1).filter(r => r.some(c => (c || '').trim() !== '')).map(r => {
+      const o = {}; headers.forEach((h, idx) => { o[h] = (r[idx] || '').trim(); }); return o;
+    });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isFac = s.role === 'facilitator';
+    const narrow = s.width < 980;
+    const playerById = (id) => s.players.find(p => p.id === id);
+
+    // header tabs
+    const facActive = isFac;
+    const tabStyle = (on) => ({
+      bg: on ? '#fff' : 'transparent',
+      color: on ? (facActive ? '#FF6B57' : '#6D5EF6') : '#8B86AD',
+      shadow: on ? '0 2px 6px -2px rgba(20,12,60,.18)' : 'none',
+    });
+    const ft = tabStyle(isFac), pt = tabStyle(!isFac);
+
+    // avatars
+    const avatarStack = s.players.slice(0,5).map(p => ({ name: p.name, color: p.color, initials: this.initials(p.name) }));
+
+    // tickets
+    const numVotes = Object.entries(s.votes).filter(([k,v]) => typeof v === 'number').map(([k,v]) => v);
+    const typeMeta = { story: { color:'#6D5EF6', icon:'S' }, bug: { color:'#FF6B57', icon:'B' }, task: { color:'#38B6A0', icon:'T' } };
+    const prioMeta = { High: { color:'#E04F4F', bg:'#FDECEC' }, Med: { color:'#D98A1F', bg:'#FEF4E4' }, Low: { color:'#5B9C5B', bg:'#EAF6EA' } };
+    const tickets = s.tickets.map(t => {
+      const active = t.id === s.activeId;
+      const tm = typeMeta[t.type], pm = prioMeta[t.priority];
+      const done = t.estimate != null;
+      return {
+        ...t,
+        select: () => this.selectTicket(t.id),
+        isActive: active,
+        typeColor: tm.color, typeIcon: tm.icon,
+        prioColor: pm.color, prioBg: pm.bg,
+        borderColor: active ? '#6D5EF6' : '#EDEAF7',
+        bg: active ? '#F6F4FE' : '#fff',
+        estimateDisplay: done ? t.estimate : '–',
+        estBg: done ? '#EAF6EA' : '#F2F0FA',
+        estColor: done ? '#3E8E3E' : '#B6B1CE',
+      };
+    });
+    const estimatedCount = s.tickets.filter(t => t.estimate != null).length;
+    const pointsDone = s.tickets.reduce((a,t) => a + (t.estimate || 0), 0);
+    const progressPct = Math.round((estimatedCount / s.tickets.length) * 100) + '%';
+
+    const active = s.tickets.find(t => t.id === s.activeId) || s.tickets[0];
+    const tmA = typeMeta[active.type], pmA = prioMeta[active.priority];
+    const activeTicket = { ...active, typeColor: tmA.color, prioColor: pmA.color, prioBg: pmA.bg };
+
+    // players on table
+    const players = s.players.map(p => {
+      const v = s.votes[p.id];
+      const hasVoted = v !== undefined;
+      let cardFace, cardBg, cardColor, cardBorder, cardShadow, flipAnim = 'none';
+      if (s.revealed && hasVoted) {
+        cardFace = String(v);
+        cardBg = '#fff'; cardColor = '#1A1830'; cardBorder = '#6D5EF6';
+        cardShadow = '0 8px 18px -8px rgba(109,94,246,.5)';
+        flipAnim = 'qFlip .4s ease both';
+      } else if (hasVoted) {
+        cardFace = '✓';
+        cardBg = 'linear-gradient(135deg,#6D5EF6,#5B4FE3)'; cardColor = '#fff'; cardBorder = 'transparent';
+        cardShadow = '0 8px 16px -8px rgba(109,94,246,.6)';
+      } else {
+        cardFace = '';
+        cardBg = '#F2F0FA'; cardColor = '#B6B1CE'; cardBorder = '#E7E3F5'; cardShadow = 'none';
+      }
+      return {
+        color: p.color, initials: this.initials(p.name),
+        shortName: p.id === 'you' ? 'You' : p.name.split(' ')[0],
+        cardFace, cardBg, cardColor, cardBorder, cardShadow, flipAnim,
+      };
+    });
+
+    // stats
+    let stats = { avg:'–', spread:'–', consensusLabel:'CONSENSUS', consensusText:'—', consensusColor:'#8B86AD', consensusBg:'#fff', consensusBorder:'#E7E4F3' };
+    if (s.revealed && numVotes.length) {
+      const avg = numVotes.reduce((a,b)=>a+b,0)/numVotes.length;
+      const hi = Math.max(...numVotes), lo = Math.min(...numVotes);
+      const uniq = [...new Set(numVotes)];
+      stats.avg = (Math.round(avg*10)/10).toString();
+      stats.spread = (hi - lo).toString();
+      if (uniq.length === 1) {
+        stats.consensusLabel = 'CONSENSUS 🎉'; stats.consensusText = 'Everyone agrees on ' + uniq[0];
+        stats.consensusColor = '#3E8E3E'; stats.consensusBg = '#EAF6EA'; stats.consensusBorder = '#BFE5BF';
+      } else if (hi - lo <= 2) {
+        stats.consensusLabel = 'CLOSE'; stats.consensusText = 'Nearly aligned';
+        stats.consensusColor = '#D98A1F'; stats.consensusBg = '#FEF4E4'; stats.consensusBorder = '#F2D9A8';
+      } else {
+        stats.consensusLabel = 'DISCUSS'; stats.consensusText = 'Wide spread — talk it out';
+        stats.consensusColor = '#E04F4F'; stats.consensusBg = '#FDECEC'; stats.consensusBorder = '#F2C4C4';
+      }
+    }
+
+    // deck
+    const myVote = s.votes.you;
+    const deck = this.deckVals.map(v => {
+      const sel = myVote === v && !s.revealed;
+      return {
+        value: String(v), cast: () => this.castVote(v),
+        bg: sel ? 'linear-gradient(135deg,#6D5EF6,#5B4FE3)' : '#fff',
+        color: sel ? '#fff' : '#4A4570',
+        border: sel ? 'transparent' : '#E2DFF0',
+        shadow: sel ? '0 10px 20px -8px rgba(109,94,246,.7)' : '0 2px 6px -3px rgba(20,12,60,.15)',
+        transform: sel ? 'translateY(-8px)' : 'translateY(0)',
+      };
+    });
+
+    // assign suggestion (mode of votes, else rounded avg to nearest fib)
+    let suggested = null;
+    if (numVotes.length) {
+      const freq = {}; numVotes.forEach(v => freq[v] = (freq[v]||0)+1);
+      suggested = +Object.keys(freq).sort((a,b)=>freq[b]-freq[a] || a-b)[0];
+    }
+    const assignCards = this.deckVals.filter(v => typeof v === 'number').map(v => {
+      const sg = v === suggested;
+      return {
+        value: String(v), assign: () => this.assignEstimate(v),
+        bg: sg ? '#EFEDFC' : '#fff', color: sg ? '#6D5EF6' : '#4A4570',
+        border: sg ? '#6D5EF6' : '#E2DFF0',
+      };
+    });
+
+    const votedCount = Object.keys(s.votes).length;
+    const voterCount = s.players.length;
+    const canReveal = !s.revealed && votedCount > 0;
+
+    // chat
+    const chat = s.chat.map(m => {
+      if (m.system) return { isSystem:true, isNormal:false, text:m.text };
+      const author = m.who === 'you' ? playerById('you') : playerById(m.who);
+      const mine = m.who === 'you';
+      return {
+        isSystem:false, isNormal:true, text:m.text,
+        name: mine ? 'You' : (author ? author.name.split(' ')[0] : m.who),
+        color: author ? author.color : '#8B86AD',
+        initials: author ? this.initials(author.name) : '?',
+        dir: mine ? 'row-reverse' : 'row',
+        textAlign: mine ? 'right' : 'left',
+        bubbleBg: mine ? '#6D5EF6' : '#F4F2FB',
+        bubbleColor: mine ? '#fff' : '#2A2550',
+        notchSide: mine ? 'bottom-right' : 'bottom-left',
+      };
+    });
+    const chatLocked = s.chatMuted && !isFac;
+
+    // panels / responsive
+    const showBoard = !narrow || s.activePanel === 'board';
+    const showPoker = !narrow || s.activePanel === 'poker';
+    const showChat  = !narrow || s.activePanel === 'chat';
+    const tabDef = [
+      { key:'board', label:'Board', icon:'📋' },
+      { key:'poker', label:'Poker', icon:'🃏' },
+      { key:'chat',  label:'Chat',  icon:'💬' },
+    ];
+    const tabs = tabDef.map(t => ({
+      label: t.label, icon: t.icon, select: () => this.setState({ activePanel: t.key }),
+      bg: s.activePanel === t.key ? '#F0EEF9' : 'transparent',
+      color: s.activePanel === t.key ? '#6D5EF6' : '#8B86AD',
+    }));
+
+    return {
+      isLobby: s.screen === 'lobby',
+      isRoom: s.screen === 'room',
+      nameDraft: s.nameDraft,
+      onNameInput: this.onNameInput, onNameKey: this.onNameKey, join: this.join, googleSignIn: this.googleSignIn,
+      lobbyOnline: s.players.length,
+
+      facTabBg: ft.bg, facTabColor: ft.color, facTabShadow: ft.shadow,
+      partTabBg: pt.bg, partTabColor: pt.color, partTabShadow: pt.shadow,
+      setFacilitator: this.setFacilitator, setParticipant: this.setParticipant,
+      isFacilitator: isFac,
+
+      avatarStack, onlineCount: s.players.length,
+
+      tickets, ticketCount: s.tickets.length, estimatedCount, pointsDone, progressPct,
+      activeTicket,
+
+      players, revealed: s.revealed, stats,
+      showWaiting: !s.revealed,
+      waitingText: votedCount === 0 ? 'Waiting for votes…' : (isFac ? 'Reveal when ready' : 'Waiting for facilitator to reveal…'),
+
+      showDeck: !s.revealed,
+      deckLabel: s.revealed ? 'Votes in' : 'Pick your estimate',
+      deck, votedCount, voterCount,
+
+      canReveal, reveal: this.reveal, reset: this.reset, skip: this.skip,
+      showAssign: isFac && s.revealed, assignCards,
+
+      chat, chatScrollRef: this.chatScrollRef,
+      chatDraft: s.chatDraft, onChatInput: this.onChatInput, onChatKey: this.onChatKey, sendChat: this.sendChat,
+      chatLocked, chatOpen: !chatLocked,
+      muteLabel: s.chatMuted ? '🔇 Muted' : '🔊 Mute',
+      muteBg: s.chatMuted ? '#FDECEC' : '#F0EEF9',
+      muteColor: s.chatMuted ? '#E04F4F' : '#5A5483',
+
+      showImport: s.showImport,
+      openImport: this.openImport, closeImport: this.closeImport, stop: this.stop,
+      importText: s.importText, onImportText: this.onImportText, onImportFile: this.onImportFile,
+      doImport: this.doImport, importError: s.importError, hasImportError: !!s.importError,
+      dropBorder: s.importFileName ? '#6D5EF6' : '#D8D3EE',
+      dropBg: s.importFileName ? '#F6F4FE' : '#FBFAFE',
+      dropTextColor: s.importFileName ? '#6D5EF6' : '#5A5483',
+      dropTitle: s.importFileName ? ('✓ ' + s.importFileName) : 'Drop a Jira export or click to browse',
+
+      isNarrow: narrow, tabs,
+      showBoard, showPoker, showChat,
+      gridCols: narrow ? '1fr' : '300px minmax(0,1fr) 320px',
+      gridGap: narrow ? '0' : '14px',
+      bodyPad: narrow ? '12px' : '14px',
+    };
+  }
+}
+</script>
+</body>
+</html>

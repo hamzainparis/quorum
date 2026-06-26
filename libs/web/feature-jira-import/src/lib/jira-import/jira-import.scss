@@ -1,0 +1,269 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}
+
+.qrm-jira-import__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 12, 60, 0.45);
+  border: none;
+  padding: 0;
+}
+
+.qrm-jira-import__shell {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  pointer-events: none;
+}
+
+.qrm-jira-import__dialog {
+  pointer-events: auto;
+  background: #fff;
+  border-radius: 22px;
+  width: min(560px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 90px -20px rgba(20, 12, 60, 0.6);
+  animation: qSlideUp 0.25s ease both;
+}
+
+.qrm-jira-import__header {
+  padding: 22px 24px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.qrm-jira-import__heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.qrm-jira-import__icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--qrm-panel-tint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--qrm-violet);
+  flex: 0 0 auto;
+}
+
+.qrm-jira-import__title {
+  font-family: var(--qrm-font-display);
+  font-weight: 700;
+  font-size: 18px;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.qrm-jira-import__subtitle {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--qrm-text-9);
+  font-weight: 500;
+}
+
+.qrm-jira-import__close {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  border: none;
+  background: var(--qrm-panel-tint);
+  color: var(--qrm-text-9);
+  font-size: 17px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  line-height: 1;
+
+  &:hover {
+    background: var(--qrm-panel-tint-hover);
+  }
+}
+
+.qrm-jira-import__body {
+  padding: 18px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.qrm-jira-import__row {
+  display: flex;
+  gap: 13px;
+
+  .qrm-jira-import__field {
+    flex: 1;
+  }
+}
+
+.qrm-jira-import__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.qrm-jira-import__label {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--qrm-text-5);
+}
+
+.qrm-jira-import__input {
+  border: 1.5px solid var(--qrm-border);
+  border-radius: 12px;
+  padding: 11px 13px;
+  font-size: 13.5px;
+  outline: none;
+  color: var(--qrm-text);
+  font-family: inherit;
+  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: var(--qrm-violet);
+  }
+}
+
+.qrm-jira-import__hint {
+  font-size: 11px;
+  color: var(--qrm-text-9);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.qrm-jira-import__info {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--qrm-text-5);
+  background: var(--qrm-panel-tint);
+  border-radius: 11px;
+  padding: 10px 13px;
+  line-height: 1.5;
+}
+
+.qrm-jira-import__info--ok {
+  color: var(--qrm-success);
+  background: var(--qrm-success-bg);
+}
+
+.qrm-jira-import__optional {
+  font-weight: 400;
+  color: var(--qrm-text-9);
+}
+
+.qrm-jira-import__required {
+  color: var(--qrm-danger);
+}
+
+.qrm-jira-import__textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+.qrm-jira-import__select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.qrm-jira-import__file-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.qrm-jira-import__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.qrm-jira-import__file-btn {
+  flex: 0 0 auto;
+  background: var(--qrm-panel-tint);
+  border: 1.5px solid var(--qrm-border);
+  border-radius: 10px;
+  padding: 8px 13px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--qrm-text-5);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+
+  &:hover {
+    background: var(--qrm-panel-tint-hover);
+    color: var(--qrm-violet);
+  }
+}
+
+.qrm-jira-import__file-name {
+  font-size: 12px;
+  color: var(--qrm-text-8);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qrm-jira-import__tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--qrm-border-5);
+}
+
+.qrm-jira-import__tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--qrm-text-8);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: var(--qrm-violet);
+  }
+}
+
+.qrm-jira-import__tab--active {
+  color: var(--qrm-violet);
+  border-bottom-color: var(--qrm-violet);
+}
+
+.qrm-jira-import__error {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--qrm-danger);
+  background: var(--qrm-danger-bg);
+  border-radius: 11px;
+  padding: 10px 13px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.qrm-jira-import__footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 5px;
+}

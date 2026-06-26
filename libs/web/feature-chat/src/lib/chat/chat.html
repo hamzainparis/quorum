@@ -1,0 +1,63 @@
+<qrm-card variant="panel">
+  <div class="qrm-chat__header">
+    <h2 class="qrm-chat__title">Team Chat <span class="qrm-chat__title-dot"></span></h2>
+    @if (isFacilitator()) {
+      <button
+        type="button"
+        class="qrm-chat__mute"
+        [class.qrm-chat__mute--active]="muted()"
+        title="Mute chat for participants"
+        (click)="toggleMute.emit()"
+      >
+        {{ muteLabel() }}
+      </button>
+    }
+  </div>
+
+  <div class="qrm-chat__messages" #scrollEl>
+    @for (row of rows(); track row.id) {
+      @if (row.isSystem) {
+        <div class="qrm-chat__system">{{ row.text }}</div>
+      } @else {
+        <div class="qrm-chat__row" [class.qrm-chat__row--mine]="row.mine">
+          <qrm-avatar [name]="row.authorName" [color]="row.color" size="sm" />
+          <div class="qrm-chat__bubble-col">
+            <div class="qrm-chat__author">{{ row.displayName }}</div>
+            <div class="qrm-chat__bubble" [class.qrm-chat__bubble--mine]="row.mine">{{ row.text }}</div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="qrm-chat__composer">
+    @if (chatLocked()) {
+      <div class="qrm-chat__locked">🔒 Chat muted by facilitator</div>
+    } @else {
+      <div class="qrm-chat__input-row">
+        <input
+          class="qrm-chat__input"
+          [value]="draft()"
+          (input)="onDraftInput($event)"
+          (keydown.enter)="sendDraft()"
+          placeholder="Message the team…"
+        />
+        <button type="button" class="qrm-chat__send" (click)="sendDraft()">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#fff"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M22 2L11 13" />
+            <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+          </svg>
+        </button>
+      </div>
+    }
+  </div>
+</qrm-card>

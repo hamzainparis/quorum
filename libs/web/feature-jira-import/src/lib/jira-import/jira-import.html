@@ -1,0 +1,198 @@
+<div
+  class="qrm-jira-import__backdrop"
+  role="button"
+  tabindex="0"
+  aria-label="Close dialog"
+  (click)="closeImport.emit()"
+  (keydown.enter)="closeImport.emit()"
+></div>
+
+<div class="qrm-jira-import__shell">
+  <div class="qrm-jira-import__dialog" role="dialog" aria-modal="true" aria-labelledby="qrm-jira-import-title">
+
+    <div class="qrm-jira-import__header">
+      <div class="qrm-jira-import__heading">
+        <div class="qrm-jira-import__icon">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <path d="M7 10l5 5 5-5" />
+            <path d="M12 15V3" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="qrm-jira-import__title" id="qrm-jira-import-title">Add to backlog</h3>
+          <p class="qrm-jira-import__subtitle">Import issues or create tickets manually</p>
+        </div>
+      </div>
+      <button type="button" class="qrm-jira-import__close" aria-label="Close" (click)="closeImport.emit()">✕</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="qrm-jira-import__tabs">
+      <button
+        type="button"
+        class="qrm-jira-import__tab"
+        [class.qrm-jira-import__tab--active]="activeTab() === 'jira'"
+        (click)="activeTab.set('jira')"
+      >Jira API</button>
+      <button
+        type="button"
+        class="qrm-jira-import__tab"
+        [class.qrm-jira-import__tab--active]="activeTab() === 'xml'"
+        (click)="activeTab.set('xml')"
+      >XML File</button>
+      <button
+        type="button"
+        class="qrm-jira-import__tab"
+        [class.qrm-jira-import__tab--active]="activeTab() === 'create'"
+        (click)="activeTab.set('create')"
+      >New Ticket</button>
+    </div>
+
+    <!-- ── Jira API tab ──────────────────────────────────────── -->
+    @if (activeTab() === 'jira') {
+      <div class="qrm-jira-import__body">
+        @if (!jiraSettings().jiraSiteUrl) {
+          <div class="qrm-jira-import__info">
+            ⚙ Jira credentials are not configured. Open <strong>Project Settings</strong> in the room header to add your site URL, email and API token.
+          </div>
+        } @else {
+          <div class="qrm-jira-import__info qrm-jira-import__info--ok">
+            ✓ Connected to <strong>{{ jiraSettings().jiraSiteUrl }}</strong> as {{ jiraSettings().jiraEmail }}
+          </div>
+        }
+
+        <label class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Project key <span class="qrm-jira-import__optional">(or use JQL below)</span></span>
+          <input
+            class="qrm-jira-import__input"
+            [value]="jiraProjectKey()"
+            (input)="onJiraProjectKeyInput($event)"
+            placeholder="e.g. PROJ"
+          />
+        </label>
+
+        <label class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Custom JQL <span class="qrm-jira-import__optional">(optional, overrides project key)</span></span>
+          <textarea
+            class="qrm-jira-import__input qrm-jira-import__textarea"
+            [value]="jiraJql()"
+            (input)="onJiraJqlInput($event)"
+            rows="2"
+            placeholder='project = "PROJ" AND sprint in openSprints() ORDER BY rank ASC'
+          ></textarea>
+        </label>
+
+        <div class="qrm-jira-import__hint">
+          Credentials are loaded from Project Settings and never stored on the server. Existing backlog is replaced.
+        </div>
+
+        @if (jiraError()) {
+          <div class="qrm-jira-import__error">⚠ {{ jiraError() }}</div>
+        }
+
+        <div class="qrm-jira-import__footer">
+          <qrm-button variant="secondary" (click)="closeImport.emit()">Cancel</qrm-button>
+          <qrm-button variant="primary" [disabled]="!jiraCanSubmit()" (click)="submitJira()">
+            {{ jiraSubmitting() ? 'Importing…' : 'Import backlog' }}
+          </qrm-button>
+        </div>
+      </div>
+    }
+
+    <!-- ── XML File tab ──────────────────────────────────────── -->
+    @if (activeTab() === 'xml') {
+      <div class="qrm-jira-import__body">
+        <div class="qrm-jira-import__hint">
+          Export your backlog from Jira: <strong>Backlog → ⋯ → Export → Export as XML</strong>. No Jira API access required.
+        </div>
+
+        <label class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Jira XML export file(s)</span>
+          <label class="qrm-jira-import__file-label">
+            <input
+              type="file"
+              accept=".xml,application/xml,text/xml"
+              multiple
+              class="qrm-jira-import__file-input"
+              (change)="onXmlFiles($event)"
+            />
+            <span class="qrm-jira-import__file-btn">Choose files</span>
+            <span class="qrm-jira-import__file-name">{{ xmlFileName() ?? 'No files chosen' }}</span>
+          </label>
+        </label>
+
+        @if (xmlError()) {
+          <div class="qrm-jira-import__error">⚠ {{ xmlError() }}</div>
+        }
+
+        @if (xmlParsed(); as tickets) {
+          <div class="qrm-jira-import__info qrm-jira-import__info--ok">
+            ✓ Found <strong>{{ tickets.length }}</strong> issue{{ tickets.length === 1 ? '' : 's' }} ready to import
+          </div>
+        }
+
+        <div class="qrm-jira-import__hint">Existing backlog is replaced.</div>
+
+        <div class="qrm-jira-import__footer">
+          <qrm-button variant="secondary" (click)="closeImport.emit()">Cancel</qrm-button>
+          <qrm-button variant="primary" [disabled]="!xmlCanImport()" (click)="importXml()">
+            Import {{ xmlParsed()?.length ?? 0 }} issue{{ (xmlParsed()?.length ?? 0) === 1 ? '' : 's' }} to backlog
+          </qrm-button>
+        </div>
+      </div>
+    }
+
+    <!-- ── New Ticket tab ────────────────────────────────────── -->
+    @if (activeTab() === 'create') {
+      <div class="qrm-jira-import__body">
+        <label class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Title <span class="qrm-jira-import__required">*</span></span>
+          <input
+            class="qrm-jira-import__input"
+            [value]="createTitle()"
+            (input)="onCreateTitleInput($event)"
+            placeholder="Short description of the work"
+          />
+        </label>
+
+        <div class="qrm-jira-import__row">
+          <label class="qrm-jira-import__field">
+            <span class="qrm-jira-import__label">Type</span>
+            <select class="qrm-jira-import__input qrm-jira-import__select" (change)="onCreateTypeChange($event)">
+              @for (t of ticketTypes; track t) {
+                <option [value]="t" [selected]="createType() === t">{{ t | titlecase }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="qrm-jira-import__field">
+            <span class="qrm-jira-import__label">Priority</span>
+            <select class="qrm-jira-import__input qrm-jira-import__select" (change)="onCreatePriorityChange($event)">
+              @for (p of priorities; track p) {
+                <option [value]="p" [selected]="createPriority() === p">{{ p }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        <div class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Description <span class="qrm-jira-import__optional">(optional)</span></span>
+          <qrm-rich-editor
+            [value]="createDesc()"
+            placeholder="Acceptance criteria, context, links…"
+            (valueChange)="createDesc.set($event)"
+          />
+        </div>
+
+        <div class="qrm-jira-import__footer">
+          <qrm-button variant="secondary" (click)="closeImport.emit()">Cancel</qrm-button>
+          <qrm-button variant="primary" [disabled]="!createCanSubmit()" (click)="submitCreate()">
+            Add ticket
+          </qrm-button>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>

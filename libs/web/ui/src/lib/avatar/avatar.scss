@@ -1,0 +1,14 @@
+.qrm-avatar {
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-family: var(--qrm-font-display);
+  flex: 0 0 auto;
+}
+
+.qrm-avatar--bordered {
+  border: 2.5px solid var(--qrm-surface);
+}

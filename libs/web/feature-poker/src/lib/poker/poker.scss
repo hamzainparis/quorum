@@ -1,0 +1,417 @@
+:host {
+  display: block;
+  min-height: 0;
+}
+
+.qrm-poker__ticket-bar {
+  flex: 0 0 auto;
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--qrm-border-5);
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.qrm-poker__ticket-key {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #fff;
+  padding: 5px 9px;
+  border-radius: 7px;
+  font-family: var(--qrm-font-display);
+}
+
+.qrm-poker__ticket-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.qrm-poker__ticket-title {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--qrm-text);
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+.qrm-poker__ticket-desc {
+  font-size: 12px;
+  color: var(--qrm-text-8);
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+.qrm-poker__desc-section {
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--qrm-border-5);
+}
+
+.qrm-poker__desc-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--qrm-violet);
+  text-align: left;
+  letter-spacing: 0.2px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--qrm-panel-tint-4);
+  }
+}
+
+.qrm-poker__desc-toggle-icon {
+  font-size: 9px;
+  line-height: 1;
+  transition: transform 0.25s ease;
+
+  &--open {
+    transform: rotate(180deg);
+  }
+}
+
+.qrm-poker__desc-body {
+  padding: 12px 22px 16px;
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--qrm-panel-tint-5);
+  border-top: 1px solid var(--qrm-border-5);
+  animation: qSlideDown 0.22s ease both;
+}
+
+@keyframes qSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.qrm-poker__table {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+
+.qrm-poker__players {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  max-width: 560px;
+  margin-bottom: 26px;
+}
+
+.qrm-poker__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 74px;
+  animation: qPop 0.4s ease both;
+}
+
+.qrm-poker__card {
+  width: 56px;
+  height: 78px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--qrm-font-display);
+  font-weight: 700;
+  font-size: 24px;
+  transition: all 0.3s;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.qrm-poker__card-face {
+  display: inline-block;
+}
+
+.qrm-poker__card--revealed {
+  background: var(--qrm-surface);
+  color: var(--qrm-text);
+  border-color: var(--qrm-violet);
+  box-shadow: 0 8px 18px -8px rgba(109, 94, 246, 0.5);
+
+  .qrm-poker__card-face {
+    animation: qFlip 0.4s ease both;
+  }
+}
+
+.qrm-poker__card--voted {
+  background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+  color: #fff;
+  box-shadow: 0 8px 16px -8px rgba(109, 94, 246, 0.6);
+}
+
+.qrm-poker__card--pending {
+  background: var(--qrm-panel-tint-3);
+  color: var(--qrm-text-11);
+  border-color: var(--qrm-panel-tint-hover);
+}
+
+.qrm-poker__identity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 74px;
+}
+
+.qrm-poker__player-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--qrm-text-4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.qrm-poker__stats {
+  display: flex;
+  gap: 14px;
+  align-items: stretch;
+  animation: qSlideUp 0.4s ease both;
+}
+
+.qrm-poker__stat-card {
+  background: var(--qrm-surface);
+  border: 1.5px solid var(--qrm-border-3);
+  border-radius: 15px;
+  padding: 14px 22px;
+  text-align: center;
+  min-width: 96px;
+}
+
+.qrm-poker__stat-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--qrm-text-8);
+  letter-spacing: 0.4px;
+}
+
+.qrm-poker__stat-value {
+  font-family: var(--qrm-font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.1;
+  margin-top: 3px;
+}
+
+.qrm-poker__stat-value--violet {
+  color: var(--qrm-violet);
+}
+
+.qrm-poker__stat-value--coral {
+  color: var(--qrm-coral);
+}
+
+.qrm-poker__consensus-card {
+  border: 1.5px solid;
+  border-radius: 15px;
+  padding: 14px 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 140px;
+}
+
+.qrm-poker__consensus-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.qrm-poker__consensus-text {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.qrm-poker__waiting {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--qrm-text-8);
+  font-size: 13px;
+  font-weight: 600;
+  animation: qFloat 3s ease-in-out infinite;
+}
+
+.qrm-poker__waiting-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--qrm-violet);
+  animation: qPulse 1.6s infinite;
+}
+
+.qrm-poker__deck-area {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--qrm-border-5);
+  background: var(--qrm-surface);
+  padding: 15px 18px;
+}
+
+.qrm-poker__deck-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+  flex-wrap: wrap;
+}
+
+.qrm-poker__deck-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--qrm-text-5);
+}
+
+.qrm-poker__deck-count {
+  font-size: 11.5px;
+  color: var(--qrm-text-8);
+  font-weight: 600;
+}
+
+.qrm-poker__deck {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.qrm-poker__deck-card {
+  width: 46px;
+  height: 64px;
+  border-radius: 11px;
+  font-family: var(--qrm-font-display);
+  font-weight: 700;
+  font-size: 19px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--qrm-surface);
+  color: var(--qrm-text-4);
+  border: 2px solid var(--qrm-border);
+  box-shadow: 0 2px 6px -3px rgba(20, 12, 60, 0.15);
+  transform: translateY(0);
+
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+.qrm-poker__deck-card--selected {
+  background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 20px -8px rgba(109, 94, 246, 0.7);
+  transform: translateY(-8px);
+
+  &:hover {
+    transform: translateY(-8px);
+  }
+}
+
+.qrm-poker__controls {
+  display: flex;
+  gap: 9px;
+  justify-content: center;
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px dashed var(--qrm-bg);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.qrm-poker__fac-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--qrm-coral);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.qrm-poker__fac-star {
+  font-size: 12px;
+}
+
+.qrm-poker__reveal {
+  background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 18px;
+  cursor: pointer;
+  box-shadow: 0 6px 14px -6px rgba(109, 94, 246, 0.7);
+  font-family: inherit;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.qrm-poker__assign-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--qrm-text-5);
+}
+
+.qrm-poker__assign-card {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border-radius: 9px;
+  font-family: var(--qrm-font-display);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  background: var(--qrm-surface);
+  color: var(--qrm-text-4);
+  border: 2px solid var(--qrm-border);
+
+  &:hover {
+    border-color: var(--qrm-violet);
+  }
+}
+
+.qrm-poker__assign-card--suggested {
+  background: #efedfc;
+  color: var(--qrm-violet);
+  border-color: var(--qrm-violet);
+}
+
+.qrm-poker__reset,
+.qrm-poker__skip {
+  background: var(--qrm-panel-tint);
+  border: none;
+  border-radius: 10px;
+  color: var(--qrm-text-5);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 9px 15px;
+  cursor: pointer;
+  font-family: inherit;
+
+  &:hover {
+    background: var(--qrm-panel-tint-hover);
+  }
+}

@@ -1,0 +1,138 @@
+<qrm-card variant="panel">
+  <div class="qrm-board__header">
+    <div class="qrm-board__heading">
+      <h2 class="qrm-board__title">Sprint Backlog</h2>
+      <div class="qrm-board__actions">
+        <button type="button" class="qrm-board__add" title="Add a ticket manually" (click)="openCreate.emit()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          New
+        </button>
+        <button type="button" class="qrm-board__import" title="Import backlog" (click)="openImport.emit()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 16V4" />
+            <path d="M7 9l5-5 5 5" />
+            <path d="M4 20h16" />
+          </svg>
+          Import
+        </button>
+        <span class="qrm-board__points">{{ pointsDone() }} pts</span>
+      </div>
+    </div>
+    <div class="qrm-board__progress-track">
+      <div class="qrm-board__progress-fill" [style.width.%]="progressPct()"></div>
+    </div>
+    <div class="qrm-board__progress-label">{{ estimatedCount() }} of {{ tickets().length }} estimated</div>
+  </div>
+
+  <div class="qrm-board__list">
+    @for (t of displayTickets(); track t.id) {
+      <div
+        class="qrm-ticket"
+        [class.qrm-ticket--active]="t.id === activeTicketId()"
+        [class.qrm-ticket--dragging]="draggingId() === t.id"
+        [draggable]="isFacilitator()"
+        role="button"
+        tabindex="0"
+        title="{{ isFacilitator() ? 'Click to vote on this ticket' : 'Click to view ticket details' }}"
+        (click)="onTicketClick(t)"
+        (keydown.enter)="onTicketClick(t)"
+        (dragstart)="onDragStart(t)"
+        (dragover)="onDragOver($event, t)"
+        (dragend)="onDragEnd()"
+      >
+        @if (isFacilitator()) {
+          <span class="qrm-ticket__handle" aria-hidden="true">⠿</span>
+        }
+        <div class="qrm-ticket__row">
+          <qrm-badge shape="square" [color]="typeMeta[t.type].color">{{ typeMeta[t.type].icon }}</qrm-badge>
+          <span class="qrm-ticket__key">{{ t.key }}</span>
+          <qrm-badge shape="pill" size="xs" [color]="priorityMeta[t.priority].color" [background]="priorityMeta[t.priority].background">
+            {{ t.priority }}
+          </qrm-badge>
+          <div class="qrm-board__spacer"></div>
+          @if (isFacilitator()) {
+            <select
+              class="qrm-ticket__estimate-select"
+              [class.qrm-ticket__estimate-select--done]="t.estimate !== null"
+              [value]="t.estimate ?? ''"
+              title="Set story points"
+              (click)="$event.stopPropagation()"
+              (change)="onEstimateChange(t, $event)"
+            >
+              <option value="">–</option>
+              @for (v of fibValues; track v) {
+                <option [value]="v">{{ v }}</option>
+              }
+            </select>
+          } @else {
+            <span class="qrm-ticket__estimate" [class.qrm-ticket__estimate--done]="t.estimate !== null">
+              {{ t.estimate ?? '–' }}
+            </span>
+          }
+        </div>
+        <div class="qrm-ticket__title">{{ t.title }}</div>
+        @if (t.id === activeTicketId()) {
+          <div class="qrm-ticket__voting">
+            <span class="qrm-ticket__voting-dot"></span>VOTING NOW
+          </div>
+        }
+      </div>
+    }
+  </div>
+</qrm-card>
+
+@if (viewingTicket(); as vt) {
+  <div
+    class="qrm-ticket-detail__backdrop"
+    role="button"
+    tabindex="0"
+    aria-label="Close ticket details"
+    (click)="closeDetail()"
+    (keydown.enter)="closeDetail()"
+  ></div>
+
+  <div class="qrm-ticket-detail__shell">
+    <div class="qrm-ticket-detail__dialog" role="dialog" aria-modal="true" aria-labelledby="qrm-ticket-detail-title">
+
+      <!-- Header row -->
+      <div class="qrm-ticket-detail__header">
+        <span class="qrm-ticket-detail__type-badge" [style.background]="typeMeta[vt.type].color">
+          {{ typeMeta[vt.type].icon }} {{ vt.type | titlecase }}
+        </span>
+        <span class="qrm-ticket-detail__key">{{ vt.key }}</span>
+        <div class="qrm-board__spacer"></div>
+        <button type="button" class="qrm-ticket-detail__close" aria-label="Close" (click)="closeDetail()">✕</button>
+      </div>
+
+      <!-- Title -->
+      <h3 class="qrm-ticket-detail__title" id="qrm-ticket-detail-title">{{ vt.title }}</h3>
+
+      <!-- Meta row -->
+      <div class="qrm-ticket-detail__meta">
+        <div class="qrm-ticket-detail__meta-item">
+          <span class="qrm-ticket-detail__meta-label">Priority</span>
+          <qrm-badge shape="pill" size="sm" [color]="priorityMeta[vt.priority].color" [background]="priorityMeta[vt.priority].background">
+            {{ vt.priority }}
+          </qrm-badge>
+        </div>
+        <div class="qrm-ticket-detail__meta-item">
+          <span class="qrm-ticket-detail__meta-label">Estimate</span>
+          <span class="qrm-ticket__estimate" [class.qrm-ticket__estimate--done]="vt.estimate !== null">
+            {{ vt.estimate ?? '–' }}
+          </span>
+        </div>
+      </div>
+
+      <hr class="qrm-ticket-detail__divider" />
+
+      <!-- Description -->
+      <div class="qrm-ticket-detail__section">
+        <span class="qrm-ticket-detail__section-label">Description</span>
+        <qrm-rich-text [content]="vt.desc" />
+      </div>
+
+    </div>
+  </div>
+}

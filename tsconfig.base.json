@@ -1,0 +1,41 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "esnext",
+    "lib": ["es2022", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "baseUrl": ".",
+    "paths": {
+      "@quorum/shared-domain": ["./libs/shared/domain/src/index.ts"],
+      "@quorum/api-room": ["./libs/api/room/src/index.ts"],
+      "@quorum/api-auth": ["./libs/api/auth/src/index.ts"],
+      "@quorum/api-jira": ["./libs/api/jira/src/index.ts"],
+      "@quorum/web-ui": ["./libs/web/ui/src/index.ts"],
+      "@quorum/web-data-access": ["./libs/web/data-access/src/index.ts"],
+      "@quorum/web-feature-lobby": ["./libs/web/feature-lobby/src/index.ts"],
+      "@quorum/web-feature-room-shell": [
+        "./libs/web/feature-room-shell/src/index.ts"
+      ],
+      "@quorum/web-feature-board": ["./libs/web/feature-board/src/index.ts"],
+      "@quorum/web-feature-poker": ["./libs/web/feature-poker/src/index.ts"],
+      "@quorum/web-feature-chat": ["./libs/web/feature-chat/src/index.ts"],
+      "@quorum/web-feature-jira-import": [
+        "./libs/web/feature-jira-import/src/index.ts"
+      ]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,277 @@
+// Design tokens + global primitives for Quorum, extracted pixel-for-pixel from
+// design/project/Quorum.dc.html. Imported once into the app's global stylesheet.
+
+:root {
+  // brand
+  --qrm-violet: #6D5EF6;
+  --qrm-violet-dark: #5B4FE3;
+  --qrm-coral: #FF6B57;
+  --qrm-teal: #38E0C9;
+  --qrm-teal-muted: #38B6A0;
+
+  // surface
+  --qrm-bg: #ECEAF6;
+  --qrm-surface: #fff;
+
+  // text scale (violet-tinted grays, darkest to lightest)
+  --qrm-text: #1A1830;
+  --qrm-text-2: #2A2550;
+  --qrm-text-3: #3C3766;
+  --qrm-text-4: #4A4570;
+  --qrm-text-5: #5A5483;
+  --qrm-text-6: #6E689A;
+  --qrm-text-7: #7A75A0;
+  --qrm-text-8: #8B86AD;
+  --qrm-text-9: #A29DBF;
+  --qrm-text-10: #A8A3C4;
+  --qrm-text-11: #B6B1CE;
+
+  // borders
+  --qrm-border: #E2DFF0;
+  --qrm-border-2: #E4E1F2;
+  --qrm-border-3: #E7E4F3;
+  --qrm-border-4: #EDEAF7;
+  --qrm-border-5: #F0EEF8;
+  --qrm-border-6: #EFEDF8;
+  --qrm-border-7: #E8E5F3;
+  --qrm-border-hover: #C3BCEA;
+  --qrm-border-dashed: #D8D3EE;
+
+  // tinted panel backgrounds
+  --qrm-panel-tint: #F0EEF9;
+  --qrm-panel-tint-2: #F4F2FB;
+  --qrm-panel-tint-3: #F2F0FA;
+  --qrm-panel-tint-4: #F6F4FE;
+  --qrm-panel-tint-5: #FAF9FE;
+  --qrm-panel-tint-6: #FBFAFE;
+  --qrm-panel-tint-7: #F0EEFB;
+  --qrm-panel-tint-hover: #E7E3F5;
+
+  // semantic states
+  --qrm-success: #3E8E3E;
+  --qrm-success-bg: #EAF6EA;
+  --qrm-success-border: #BFE5BF;
+  --qrm-warning: #D98A1F;
+  --qrm-warning-bg: #FEF4E4;
+  --qrm-warning-border: #F2D9A8;
+  --qrm-danger: #E04F4F;
+  --qrm-danger-bg: #FDECEC;
+  --qrm-danger-border: #F2C4C4;
+  --qrm-low: #5B9C5B;
+
+  // ticket type colors
+  --qrm-type-story: #6D5EF6;
+  --qrm-type-bug: #FF6B57;
+  --qrm-type-task: #38B6A0;
+
+  // fonts
+  --qrm-font-display: 'Space Grotesk', system-ui, sans-serif;
+  --qrm-font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  font-family: var(--qrm-font-body);
+  background: var(--qrm-bg);
+  color: var(--qrm-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C9C4E6;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes qPop {
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes qFlip {
+  0% {
+    transform: rotateY(90deg);
+    opacity: 0;
+  }
+  100% {
+    transform: rotateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes qFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+@keyframes qPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(91, 79, 227, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(91, 79, 227, 0);
+  }
+}
+
+@keyframes qSlideUp {
+  0% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes qBlobA {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.15);
+  }
+}
+
+@keyframes qBlobB {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-50px, 40px) scale(1.1);
+  }
+}
+
+/* ── Rich text rendering (applied to [innerHTML] content) ──────── */
+/* These must be global because Angular's ViewEncapsulation prevents
+   scoped styles from reaching dynamically inserted innerHTML nodes. */
+
+.qrm-rich-text {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--qrm-text-2);
+  word-break: break-word;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--qrm-font-display);
+    font-weight: 700;
+    margin: 1em 0 0.4em;
+    line-height: 1.25;
+    color: var(--qrm-text);
+  }
+  h1:first-child, h2:first-child, h3:first-child,
+  h4:first-child, h5:first-child, h6:first-child { margin-top: 0; }
+
+  h1 { font-size: 1.4em; }
+  h2 { font-size: 1.2em; }
+  h3 { font-size: 1.1em; }
+  h4 { font-size: 1em; }
+
+  p { margin: 0 0 0.75em; }
+  p:last-child { margin-bottom: 0; }
+
+  ul, ol {
+    margin: 0 0 0.75em 1.4em;
+    padding: 0;
+  }
+  ul:last-child, ol:last-child { margin-bottom: 0; }
+
+  li { margin-bottom: 0.25em; }
+
+  strong, b { font-weight: 700; }
+  em, i      { font-style: italic; }
+  u          { text-decoration: underline; }
+  s          { text-decoration: line-through; color: var(--qrm-text-9); }
+
+  code, tt {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.875em;
+    background: var(--qrm-panel-tint);
+    border: 1px solid var(--qrm-border-5);
+    border-radius: 5px;
+    padding: 1px 5px;
+    color: var(--qrm-violet);
+  }
+
+  pre {
+    background: var(--qrm-panel-tint);
+    border: 1px solid var(--qrm-border-5);
+    border-radius: 10px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    margin: 0 0 0.75em;
+
+    code, tt {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--qrm-text-2);
+      font-size: 12.5px;
+    }
+  }
+
+  blockquote {
+    border-left: 3px solid var(--qrm-violet);
+    margin: 0 0 0.75em;
+    padding: 4px 0 4px 12px;
+    color: var(--qrm-text-5);
+    font-style: italic;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--qrm-border-5);
+    margin: 0.75em 0;
+  }
+
+  a {
+    color: var(--qrm-violet);
+    text-decoration: none;
+  }
+  a:hover { text-decoration: underline; }
+
+  .error { color: var(--qrm-danger); font-size: 0.9em; }
+}

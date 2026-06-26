@@ -1,0 +1,11 @@
+<span
+  class="qrm-badge"
+  [class.qrm-badge--xs]="size() === 'xs'"
+  [class.qrm-badge--sm]="size() === 'sm'"
+  [class.qrm-badge--pill]="shape() === 'pill'"
+  [class.qrm-badge--square]="shape() === 'square'"
+  [style.color]="shape() === 'square' ? '#fff' : color()"
+  [style.background]="shape() === 'square' ? color() : background()"
+>
+  <ng-content></ng-content>
+</span>

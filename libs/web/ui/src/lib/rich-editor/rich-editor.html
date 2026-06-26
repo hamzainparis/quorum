@@ -1,0 +1,27 @@
+<div class="qrm-rich-editor">
+  <div class="qrm-rich-editor__toolbar" role="toolbar" aria-label="Text formatting">
+    @for (item of toolbar; track $index) {
+      @if (isSep(item)) {
+        <span class="qrm-rich-editor__sep"></span>
+      } @else {
+        <button
+          type="button"
+          class="qrm-rich-editor__btn"
+          [title]="asBtn(item).title"
+          [innerHTML]="asBtn(item).icon"
+          (mousedown)="$event.preventDefault()"
+          (click)="format(asBtn(item).cmd, asBtn(item).arg)"
+        ></button>
+      }
+    }
+  </div>
+
+  <div
+    #editor
+    class="qrm-rich-editor__content"
+    contenteditable="true"
+    [attr.data-placeholder]="placeholder()"
+    [class.qrm-rich-editor__content--empty]="isEmpty()"
+    (input)="onInput()"
+  ></div>
+</div>

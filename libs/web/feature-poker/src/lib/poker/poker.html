@@ -1,0 +1,129 @@
+<qrm-card variant="gradient">
+  @if (activeTicket(); as ticket) {
+    <div class="qrm-poker__ticket-bar">
+      <span class="qrm-poker__ticket-key" [style.background]="typeMeta[ticket.type].color">{{ ticket.key }}</span>
+      <div class="qrm-poker__ticket-info">
+        <div class="qrm-poker__ticket-title">{{ ticket.title }}</div>
+        @if (plainDesc()) {
+          <div class="qrm-poker__ticket-desc">{{ plainDesc() }}</div>
+        }
+      </div>
+      <qrm-badge
+        shape="pill"
+        size="sm"
+        [color]="priorityMeta[ticket.priority].color"
+        [background]="priorityMeta[ticket.priority].background"
+      >
+        {{ ticket.priority }}
+      </qrm-badge>
+    </div>
+
+    @if (hasDesc()) {
+      <div class="qrm-poker__desc-section">
+        <button
+          type="button"
+          class="qrm-poker__desc-toggle"
+          (click)="descExpanded.set(!descExpanded())"
+        >
+          <span class="qrm-poker__desc-toggle-icon" [class.qrm-poker__desc-toggle-icon--open]="descExpanded()">▼</span>
+          {{ descExpanded() ? 'Hide' : 'Show' }} description
+        </button>
+        @if (descExpanded()) {
+          <div class="qrm-poker__desc-body">
+            <qrm-rich-text [content]="ticket.desc" />
+          </div>
+        }
+      </div>
+    }
+  }
+
+  <div class="qrm-poker__table">
+    <div class="qrm-poker__players">
+      @for (p of playerCards(); track p.id) {
+        <div class="qrm-poker__player">
+          <div class="qrm-poker__card qrm-poker__card--{{ p.state }}">
+            <span class="qrm-poker__card-face">{{ p.face }}</span>
+          </div>
+          <div class="qrm-poker__identity">
+            <qrm-avatar [name]="p.name" [color]="p.color" size="xs" />
+            <span class="qrm-poker__player-name">{{ p.shortName }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (revealed()) {
+      <div class="qrm-poker__stats">
+        <div class="qrm-poker__stat-card">
+          <div class="qrm-poker__stat-label">AVERAGE</div>
+          <div class="qrm-poker__stat-value qrm-poker__stat-value--violet">{{ displayStats().avg }}</div>
+        </div>
+        <div
+          class="qrm-poker__consensus-card"
+          [style.background]="displayStats().meta.background"
+          [style.border-color]="displayStats().meta.border"
+        >
+          <div class="qrm-poker__consensus-label" [style.color]="displayStats().meta.color">
+            {{ displayStats().label }}
+          </div>
+          <div class="qrm-poker__consensus-text" [style.color]="displayStats().meta.color">
+            {{ displayStats().text }}
+          </div>
+        </div>
+        <div class="qrm-poker__stat-card">
+          <div class="qrm-poker__stat-label">SPREAD</div>
+          <div class="qrm-poker__stat-value qrm-poker__stat-value--coral">{{ displayStats().spread }}</div>
+        </div>
+      </div>
+    } @else {
+      <div class="qrm-poker__waiting">
+        <span class="qrm-poker__waiting-dot"></span>{{ waitingText() }}
+      </div>
+    }
+  </div>
+
+  <div class="qrm-poker__deck-area">
+    @if (!revealed()) {
+      <div class="qrm-poker__deck-header">
+        <span class="qrm-poker__deck-label">{{ deckLabel() }}</span>
+        <span class="qrm-poker__deck-count">{{ votedCount() }}/{{ voterCount() }} voted</span>
+      </div>
+      <div class="qrm-poker__deck">
+        @for (c of deck(); track c.value) {
+          <button
+            type="button"
+            class="qrm-poker__deck-card"
+            [class.qrm-poker__deck-card--selected]="c.selected"
+            (click)="selectVote(c.value)"
+          >
+            {{ c.value }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (isFacilitator()) {
+      <div class="qrm-poker__controls">
+        <span class="qrm-poker__fac-label"><span class="qrm-poker__fac-star">★</span>FACILITATOR</span>
+        @if (canReveal()) {
+          <button type="button" class="qrm-poker__reveal" (click)="reveal.emit()">Reveal votes</button>
+        }
+        @if (showAssign()) {
+          <span class="qrm-poker__assign-label">Assign:</span>
+          @for (a of assignCards(); track a.value) {
+            <button
+              type="button"
+              class="qrm-poker__assign-card"
+              [class.qrm-poker__assign-card--suggested]="a.suggested"
+              (click)="assignEstimate.emit(a.value)"
+            >
+              {{ a.value }}
+            </button>
+          }
+        }
+        <button type="button" class="qrm-poker__reset" (click)="resetVotes.emit()">↺ Reset</button>
+        <button type="button" class="qrm-poker__skip" (click)="skip.emit()">Skip →</button>
+      </div>
+    }
+  </div>
+</qrm-card>
