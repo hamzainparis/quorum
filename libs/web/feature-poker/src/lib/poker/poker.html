@@ -41,7 +41,7 @@
     <div class="qrm-poker__players">
       @for (p of playerCards(); track p.id) {
         <div class="qrm-poker__player">
-          <div class="qrm-poker__card qrm-poker__card--{{ p.state }}">
+          <div class="qrm-poker__card qrm-poker__card--{{ p.state }}" [class.qrm-poker__card--joker]="p.joker">
             <span class="qrm-poker__card-face">{{ p.face }}</span>
           </div>
           <div class="qrm-poker__identity">
@@ -94,6 +94,7 @@
             type="button"
             class="qrm-poker__deck-card"
             [class.qrm-poker__deck-card--selected]="c.selected"
+            [class.qrm-poker__deck-card--joker]="c.joker"
             (click)="selectVote(c.value)"
           >
             {{ c.value }}
