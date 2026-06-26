@@ -246,6 +246,23 @@ export class RoomStateService {
     return this.emitUpdate(room);
   }
 
+  deleteTicket(roomCode: string, playerId: string, ticketId: string): RoomSnapshot {
+    const room = this.requireRoom(roomCode);
+    this.requirePlayer(room, playerId);
+    const ticket = room.tickets.find((t) => t.id === ticketId);
+    if (ticket) {
+      room.tickets = room.tickets.filter((t) => t.id !== ticketId);
+      if (room.activeTicketId === ticketId) {
+        const next = room.tickets.find((t) => t.estimate == null) ?? null;
+        room.activeTicketId = next ? next.id : null;
+        room.votes = {};
+        room.revealed = false;
+      }
+      this.pushSystemMessage(room, `Ticket ${ticket.key} removed from backlog`);
+    }
+    return this.emitUpdate(room);
+  }
+
   importTickets(roomCode: string, tickets: Ticket[]): RoomSnapshot {
     const room = this.requireRoom(roomCode);
 

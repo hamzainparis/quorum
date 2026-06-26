@@ -25,6 +25,7 @@ export class Board {
   readonly openImport = output<void>();
   readonly openCreate = output<void>();
   readonly setEstimate = output<SetEstimateEvent>();
+  readonly deleteTicket = output<string>();
 
   readonly typeMeta = TICKET_TYPE_META;
   readonly priorityMeta = TICKET_PRIORITY_META;
@@ -81,6 +82,12 @@ export class Board {
 
   closeDetail(): void {
     this.viewingTicket.set(null);
+  }
+
+  onDeleteTicket(event: Event, ticket: Ticket): void {
+    event.stopPropagation();
+    if (!confirm(`Delete ticket ${ticket.key}? This can't be undone.`)) return;
+    this.deleteTicket.emit(ticket.id);
   }
 
   onDragStart(ticket: Ticket): void {

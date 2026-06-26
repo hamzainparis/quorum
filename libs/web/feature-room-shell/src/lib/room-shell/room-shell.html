@@ -57,6 +57,15 @@
       <qrm-button size="sm" (click)="copyInviteLink()">
         {{ inviteCopied() ? 'Copied!' : 'Invite' }}
       </qrm-button>
+
+      <button type="button" class="qrm-room__disconnect-btn" title="Disconnect from this room" (click)="leaveRoom()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+          <path d="M16 17l5-5-5-5" />
+          <path d="M21 12H9" />
+        </svg>
+        Disconnect
+      </button>
     </header>
 
     <div class="qrm-room__body">
@@ -70,6 +79,7 @@
           (openImport)="openImport()"
           (openCreate)="openCreate()"
           (setEstimate)="setEstimate($event)"
+          (deleteTicket)="deleteTicket($event)"
         />
       </div>
 

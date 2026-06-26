@@ -88,6 +88,10 @@ export class RoomSocketService {
     this.socket?.emit(SOCKET_EVENTS.addTicket, payload);
   }
 
+  deleteTicket(ticketId: string): void {
+    this.socket?.emit(SOCKET_EVENTS.deleteTicket, { ticketId });
+  }
+
   disconnect(): void {
     this.socket?.disconnect();
     this.socket = null;

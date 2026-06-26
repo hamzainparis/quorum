@@ -221,6 +221,26 @@
   }
 }
 
+.qrm-ticket__delete {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--qrm-text-10);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--qrm-danger-bg);
+    color: var(--qrm-danger);
+  }
+}
+
 .qrm-ticket__title {
   font-size: 13px;
   font-weight: 600;

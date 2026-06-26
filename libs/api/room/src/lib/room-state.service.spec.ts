@@ -136,4 +136,39 @@ describe('RoomStateService', () => {
     const snapshot = service.makeFacilitator('ABCD', 'p1', 'p2');
     expect(snapshot.facilitatorId).toBe('p2');
   });
+
+  it('deletes a ticket from the backlog and posts a system message', () => {
+    service.join({ roomCode: 'ABCD', clientId: 'p1', name: 'Alex' }, 'socket-1');
+    service.importTickets('ABCD', [ticket('t1'), ticket('t2')]);
+
+    const snapshot = service.deleteTicket('ABCD', 'p1', 't2');
+    expect(snapshot.tickets.map((t) => t.id)).toEqual(['t1']);
+    expect(snapshot.chat.at(-1)).toMatchObject({ system: true, text: 'Ticket SPR-t2 removed from backlog' });
+  });
+
+  it('advances the active ticket when the currently active ticket is deleted', () => {
+    service.join({ roomCode: 'ABCD', clientId: 'p1', name: 'Alex' }, 'socket-1');
+    service.importTickets('ABCD', [ticket('t1'), ticket('t2')]);
+    expect(service.getSnapshot('ABCD').activeTicketId).toBe('t1');
+
+    const snapshot = service.deleteTicket('ABCD', 'p1', 't1');
+    expect(snapshot.activeTicketId).toBe('t2');
+  });
+
+  it('clears the active ticket when the last remaining ticket is deleted', () => {
+    service.join({ roomCode: 'ABCD', clientId: 'p1', name: 'Alex' }, 'socket-1');
+    service.importTickets('ABCD', [ticket('t1')]);
+
+    const snapshot = service.deleteTicket('ABCD', 'p1', 't1');
+    expect(snapshot.tickets).toEqual([]);
+    expect(snapshot.activeTicketId).toBeNull();
+  });
+
+  it('deleting an unknown ticket is a no-op', () => {
+    service.join({ roomCode: 'ABCD', clientId: 'p1', name: 'Alex' }, 'socket-1');
+    service.importTickets('ABCD', [ticket('t1')]);
+
+    const snapshot = service.deleteTicket('ABCD', 'p1', 'nope');
+    expect(snapshot.tickets.map((t) => t.id)).toEqual(['t1']);
+  });
 });

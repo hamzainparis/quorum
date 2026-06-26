@@ -1,7 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { ErrorPayload, JoinedPayload, RoomSnapshot } from '@quorum/shared-domain';
-import { AuthService, ClientIdService, JiraImportService, RoomSocketService } from '@quorum/web-data-access';
+import {
+  AuthService,
+  ClientIdService,
+  JiraImportService,
+  RoomSocketService,
+  UserProfileService,
+} from '@quorum/web-data-access';
 import { RoomShell } from './room-shell';
 
 function buildSnapshot(overrides: Partial<RoomSnapshot> = {}): RoomSnapshot {
@@ -38,6 +44,7 @@ describe('RoomShell', () => {
     sendChat: jest.Mock;
     toggleMute: jest.Mock;
     makeFacilitator: jest.Mock;
+    deleteTicket: jest.Mock;
     disconnect: jest.Mock;
     state$: Subject<RoomSnapshot>;
     joined$: Subject<JoinedPayload>;
@@ -57,6 +64,7 @@ describe('RoomShell', () => {
       sendChat: jest.fn(),
       toggleMute: jest.fn(),
       makeFacilitator: jest.fn(),
+      deleteTicket: jest.fn(),
       disconnect: jest.fn(),
       state$: new Subject<RoomSnapshot>(),
       joined$: new Subject<JoinedPayload>(),
@@ -160,5 +168,38 @@ describe('RoomShell', () => {
   it('disconnects the socket when destroyed', () => {
     fixture.destroy();
     expect(roomSocket.disconnect).toHaveBeenCalled();
+  });
+
+  it('delegates deleteTicket to the room socket', () => {
+    component.deleteTicket('t1');
+    expect(roomSocket.deleteTicket).toHaveBeenCalledWith('t1');
+  });
+
+  it('disconnects and returns to the lobby when the user confirms leaving the room', () => {
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    const userProfile = TestBed.inject(UserProfileService);
+    userProfile.save({ name: 'Jordan Lee' });
+    roomSocket.state$.next(buildSnapshot());
+    roomSocket.joined$.next({ playerId: 'client-1' });
+    fixture.detectChanges();
+
+    component.leaveRoom();
+
+    expect(roomSocket.disconnect).toHaveBeenCalled();
+    expect(userProfile.profile()).toBeNull();
+    expect(component.joined()).toBe(false);
+    expect(component.snapshot()).toBeNull();
+  });
+
+  it('stays connected when the user cancels the leave confirmation', () => {
+    jest.spyOn(window, 'confirm').mockReturnValue(false);
+    roomSocket.state$.next(buildSnapshot());
+    roomSocket.joined$.next({ playerId: 'client-1' });
+    fixture.detectChanges();
+
+    component.leaveRoom();
+
+    expect(roomSocket.disconnect).not.toHaveBeenCalled();
+    expect(component.joined()).toBe(true);
   });
 });

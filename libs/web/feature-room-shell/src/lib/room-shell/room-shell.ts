@@ -122,6 +122,10 @@ export class RoomShell {
     this.roomSocket.setEstimate(payload.ticketId, payload.value);
   }
 
+  deleteTicket(ticketId: string): void {
+    this.roomSocket.deleteTicket(ticketId);
+  }
+
   sendChat(text: string): void {
     this.roomSocket.sendChat(text);
   }
@@ -136,6 +140,14 @@ export class RoomShell {
 
   toggleCardTheme(): void {
     this.cardThemeSvc.toggle();
+  }
+
+  leaveRoom(): void {
+    if (!confirm('Disconnect from this room?')) return;
+    this.roomSocket.disconnect();
+    this.userProfile.clear();
+    this.joined.set(false);
+    this.snapshot.set(null);
   }
 
   openImport(): void {

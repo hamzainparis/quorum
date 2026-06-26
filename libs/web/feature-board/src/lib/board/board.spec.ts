@@ -110,4 +110,29 @@ describe('Board', () => {
     fixture.nativeElement.querySelector('.qrm-board__import').click();
     expect(spy).toHaveBeenCalled();
   });
+
+  it('emits deleteTicket for the right ticket once the user confirms', () => {
+    setup();
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
+    const spy = jest.fn();
+    component.deleteTicket.subscribe(spy);
+    const rows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.qrm-ticket'));
+    const deleteBtn = rows[1].querySelector('.qrm-ticket__delete') as HTMLButtonElement;
+    deleteBtn.click();
+    expect(spy).toHaveBeenCalledWith('t2');
+  });
+
+  it('does not emit deleteTicket, or select the ticket, when the user cancels confirmation', () => {
+    setup(true);
+    jest.spyOn(window, 'confirm').mockReturnValue(false);
+    const deleteSpy = jest.fn();
+    const selectSpy = jest.fn();
+    component.deleteTicket.subscribe(deleteSpy);
+    component.selectTicket.subscribe(selectSpy);
+    const rows: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.qrm-ticket'));
+    const deleteBtn = rows[0].querySelector('.qrm-ticket__delete') as HTMLButtonElement;
+    deleteBtn.click();
+    expect(deleteSpy).not.toHaveBeenCalled();
+    expect(selectSpy).not.toHaveBeenCalled();
+  });
 });

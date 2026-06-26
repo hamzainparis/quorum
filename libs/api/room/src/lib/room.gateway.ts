@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
 import {
   AssignEstimatePayload,
   AddTicketPayload,
+  DeleteTicketPayload,
   ErrorPayload,
   ImportTicketsPayload,
   JoinPayload,
@@ -172,6 +173,16 @@ export class RoomGateway implements OnGatewayInit, OnGatewayDisconnect {
   ): void {
     this.withContext(client, ({ roomCode, playerId }) =>
       this.roomState.addTicket(roomCode, playerId, payload)
+    );
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.deleteTicket)
+  handleDeleteTicket(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: DeleteTicketPayload
+  ): void {
+    this.withContext(client, ({ roomCode, playerId }) =>
+      this.roomState.deleteTicket(roomCode, playerId, payload.ticketId)
     );
   }
 

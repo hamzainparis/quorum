@@ -16,6 +16,7 @@ export const SOCKET_EVENTS = {
   claimFacilitator: 'room:claimFacilitator',
   importTickets: 'room:importTickets',
   addTicket: 'room:addTicket',
+  deleteTicket: 'room:deleteTicket',
   state: 'room:state',
   joined: 'room:joined',
   error: 'room:error',
@@ -75,6 +76,10 @@ export interface AddTicketPayload {
   type: TicketType;
   priority: Priority;
   desc: string;
+}
+
+export interface DeleteTicketPayload {
+  ticketId: string;
 }
 
 export interface ImportTicketsResult {

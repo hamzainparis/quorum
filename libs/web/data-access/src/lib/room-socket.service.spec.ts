@@ -74,4 +74,10 @@ describe('RoomSocketService', () => {
     });
     socket._trigger(SOCKET_EVENTS.error, { message: 'boom' });
   });
+
+  it('emits deleteTicket events', () => {
+    service.join({ roomCode: 'ABCD', clientId: 'p1', name: 'Alex' });
+    service.deleteTicket('t1');
+    expect(socket.emit).toHaveBeenCalledWith(SOCKET_EVENTS.deleteTicket, { ticketId: 't1' });
+  });
 });
