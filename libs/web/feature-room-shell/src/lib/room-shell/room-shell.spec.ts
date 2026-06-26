@@ -45,6 +45,7 @@ describe('RoomShell', () => {
   };
 
   beforeEach(async () => {
+    localStorage.clear();
     roomSocket = {
       join: jest.fn(),
       vote: jest.fn(),
@@ -146,6 +147,14 @@ describe('RoomShell', () => {
 
     expect(writeText).toHaveBeenCalledWith(`${location.origin}/r/ABCD`);
     expect(component.inviteCopied()).toBe(true);
+  });
+
+  it('toggles between the classic and realistic card themes', () => {
+    expect(component.isRealisticTheme()).toBe(false);
+    component.toggleCardTheme();
+    expect(component.isRealisticTheme()).toBe(true);
+    component.toggleCardTheme();
+    expect(component.isRealisticTheme()).toBe(false);
   });
 
   it('disconnects the socket when destroyed', () => {

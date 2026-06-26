@@ -415,3 +415,81 @@
     background: var(--qrm-panel-tint-hover);
   }
 }
+
+/* ── "Realistic" card theme ──────────────────────────────────────
+   Toggled from the room header (data-card-theme on <html>); restyles
+   the deck, table and assign cards to look like printed card stock
+   instead of the flat app-chrome look. */
+
+:host-context([data-card-theme='realistic']) {
+  .qrm-poker__card,
+  .qrm-poker__deck-card,
+  .qrm-poker__assign-card {
+    border-radius: 8px;
+    font-family: Georgia, 'Times New Roman', serif;
+  }
+
+  .qrm-poker__deck-card,
+  .qrm-poker__assign-card,
+  .qrm-poker__card--revealed,
+  .qrm-poker__card--voted {
+    background: linear-gradient(165deg, #fffdf6, #f3ecd8);
+    border: 1.5px solid #cbb98a;
+    color: #2b2440;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+      0 1px 0 rgba(43, 36, 64, 0.25),
+      0 4px 10px -4px rgba(43, 36, 64, 0.35);
+    position: relative;
+  }
+
+  .qrm-poker__deck-card::before,
+  .qrm-poker__deck-card::after,
+  .qrm-poker__assign-card::before,
+  .qrm-poker__assign-card::after {
+    content: '♠';
+    position: absolute;
+    font-size: 8px;
+    color: #2b2440;
+    opacity: 0.6;
+  }
+
+  .qrm-poker__deck-card::before,
+  .qrm-poker__assign-card::before {
+    top: 4px;
+    left: 5px;
+  }
+
+  .qrm-poker__deck-card::after,
+  .qrm-poker__assign-card::after {
+    bottom: 4px;
+    right: 5px;
+    transform: rotate(180deg);
+  }
+
+  .qrm-poker__deck-card:hover {
+    border-color: #8a6d2f;
+  }
+
+  .qrm-poker__deck-card--selected,
+  .qrm-poker__card--voted,
+  .qrm-poker__assign-card--suggested {
+    background: linear-gradient(165deg, #fff7e0, #f5e3ad);
+    border-color: #b8902f;
+    color: #5c3d0a;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+      0 1px 0 rgba(184, 144, 47, 0.5),
+      0 6px 14px -6px rgba(184, 144, 47, 0.6);
+  }
+
+  .qrm-poker__card--revealed {
+    border-color: #6d5ef6;
+  }
+
+  .qrm-poker__card--pending {
+    background: repeating-linear-gradient(45deg, #2b2440, #2b2440 6px, #443a66 6px, #443a66 12px);
+    border: 1.5px solid #2b2440;
+    border-radius: 8px;
+  }
+}

@@ -197,6 +197,34 @@
   }
 }
 
+.qrm-room__theme-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: none;
+  background: var(--qrm-panel-tint);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  &:hover {
+    background: var(--qrm-panel-tint-hover);
+  }
+}
+
+.qrm-room__theme-btn--active {
+  background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+
+  &:hover {
+    background: linear-gradient(135deg, var(--qrm-violet), var(--qrm-violet-dark));
+  }
+}
+
 /* ── Settings dialog ──────────────────────────────────────────── */
 
 .qrm-settings__backdrop {

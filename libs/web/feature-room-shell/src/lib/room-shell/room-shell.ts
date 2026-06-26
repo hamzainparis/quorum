@@ -1,7 +1,7 @@
 import { DestroyRef, ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RoomSnapshot, VoteValue } from '@quorum/shared-domain';
-import { ClientIdService, ProjectSettings, ProjectSettingsService, RoomSocketService, UserProfileService } from '@quorum/web-data-access';
+import { CardThemeService, ClientIdService, ProjectSettings, ProjectSettingsService, RoomSocketService, UserProfileService } from '@quorum/web-data-access';
 import { Avatar, Button } from '@quorum/web-ui';
 import { Board } from '@quorum/web-feature-board';
 import { Chat } from '@quorum/web-feature-chat';
@@ -31,6 +31,7 @@ export class RoomShell {
   private readonly roomSocket = inject(RoomSocketService);
   private readonly settingsSvc = inject(ProjectSettingsService);
   private readonly userProfile = inject(UserProfileService);
+  private readonly cardThemeSvc = inject(CardThemeService);
 
   readonly currentPlayerId = this.clientId.getOrCreate();
 
@@ -54,6 +55,7 @@ export class RoomShell {
   readonly settingsSaved = signal(false);
 
   readonly isFacilitator = computed(() => this.snapshot()?.facilitatorId === this.currentPlayerId);
+  readonly isRealisticTheme = computed(() => this.cardThemeSvc.theme() === 'realistic');
   readonly avatarStack = computed(() => this.snapshot()?.players.slice(0, 5) ?? []);
   readonly onlineCount = computed(() => this.snapshot()?.players.length ?? 0);
 
@@ -130,6 +132,10 @@ export class RoomShell {
 
   claimFacilitator(): void {
     this.roomSocket.claimFacilitator();
+  }
+
+  toggleCardTheme(): void {
+    this.cardThemeSvc.toggle();
   }
 
   openImport(): void {
