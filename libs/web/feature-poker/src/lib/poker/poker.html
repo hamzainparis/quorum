@@ -50,9 +50,9 @@
             @if (p.state === 'revealed') {
               <span class="qrm-poker__card-real">
                 @if (p.joker) {
-                  <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">J</span>
+                  <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">?</span>
                   <span class="qrm-poker__pip-center">🃏</span>
-                  <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">J</span>
+                  <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">?</span>
                 } @else {
                   <span class="qrm-poker__corner qrm-poker__corner--tl">{{ p.face }}<small>{{ p.suit?.symbol }}</small></span>
                   <span class="qrm-poker__pip-center">{{ p.suit?.symbol }}</span>
@@ -117,9 +117,9 @@
           >
             <span class="qrm-poker__plain-value">{{ c.value }}</span>
             @if (c.joker) {
-              <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">J</span>
+              <span class="qrm-poker__corner qrm-poker__corner--tl qrm-poker__corner--joker">?</span>
               <span class="qrm-poker__pip-center">🃏</span>
-              <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">J</span>
+              <span class="qrm-poker__corner qrm-poker__corner--br qrm-poker__corner--joker">?</span>
             } @else {
               <span class="qrm-poker__corner qrm-poker__corner--tl">{{ c.value }}<small>{{ c.suit?.symbol }}</small></span>
               <span class="qrm-poker__pip-center">{{ c.suit?.symbol }}</span>
