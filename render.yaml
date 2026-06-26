@@ -3,7 +3,7 @@ services:
     name: quorum
     runtime: node
     plan: free
-    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm nx run-many -t build -p quorum-api quorum-web
+    buildCommand: corepack enable && yarn install --frozen-lockfile && yarn nx run-many -t build -p quorum-api quorum-web
     startCommand: node dist/apps/quorum-api/main.js
     envVars:
       - key: NODE_ENV
