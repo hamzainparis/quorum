@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { JiraImportService, ProjectSettingsService, RoomSocketService } from '@quorum/web-data-access';
 import { JiraImport } from './jira-import';
@@ -8,20 +9,20 @@ describe('JiraImport', () => {
   let importBacklog: jest.Mock;
   let importTickets: jest.Mock;
   let addTicket: jest.Mock;
-  let settings: { jiraSiteUrl: string; jiraEmail: string; jiraApiToken: string; jiraProjectKey: string };
+  let settings: ReturnType<typeof signal<{ jiraSiteUrl: string; jiraEmail: string; jiraApiToken: string; jiraProjectKey: string }>>;
 
   beforeEach(async () => {
     importBacklog = jest.fn();
     importTickets = jest.fn();
     addTicket = jest.fn();
-    settings = { jiraSiteUrl: 'https://team.atlassian.net', jiraEmail: 'me@team.com', jiraApiToken: 'secret', jiraProjectKey: '' };
+    settings = signal({ jiraSiteUrl: 'https://team.atlassian.net', jiraEmail: 'me@team.com', jiraApiToken: 'secret', jiraProjectKey: '' });
 
     await TestBed.configureTestingModule({
       imports: [JiraImport],
       providers: [
         { provide: JiraImportService, useValue: { importBacklog } },
         { provide: RoomSocketService, useValue: { importTickets, addTicket } },
-        { provide: ProjectSettingsService, useValue: { settings: () => settings } },
+        { provide: ProjectSettingsService, useValue: { settings } },
       ],
     }).compileComponents();
 
@@ -58,7 +59,7 @@ describe('JiraImport', () => {
     });
 
     it('requires Jira settings to be configured', () => {
-      settings.jiraSiteUrl = '';
+      settings.update((s) => ({ ...s, jiraSiteUrl: '' }));
       component.jiraProjectKey.set('SPR');
       expect(component.jiraCanSubmit()).toBe(false);
     });
