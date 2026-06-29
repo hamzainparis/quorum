@@ -40,7 +40,7 @@ function extractJiraErrorMessage(body: string): string | undefined {
 async function jiraFetch(
   creds: JiraCredentials,
   path: string,
-  init: { method: 'GET' | 'POST'; body?: string }
+  init: { method: 'GET' | 'POST' | 'PUT'; body?: string }
 ): Promise<unknown> {
   const url = `${normalizeSiteUrl(creds.siteUrl)}${path}`;
   let res: Response;
@@ -65,6 +65,10 @@ async function jiraFetch(
     const text = await res.text().catch(() => '');
     throw new JiraRequestError(extractJiraErrorMessage(text) ?? `Jira responded with ${res.status}`);
   }
+  // Some endpoints (e.g. issue edit) reply 204 No Content with an empty body.
+  if (res.status === 204) {
+    return null;
+  }
   return res.json();
 }
 
@@ -88,4 +92,58 @@ export async function searchIssues(
   })) as { issues?: JiraIssue[] };
 
   return data.issues ?? [];
+}
+
+interface PickerIssue {
+  key: string;
+  summary?: string;
+  summaryText?: string;
+}
+
+interface PickerResponse {
+  sections?: { issues?: PickerIssue[] }[];
+}
+
+/**
+ * Autocomplete issues by key or summary using Jira's issue picker endpoint, which is
+ * built for exactly this (typing "SCRUM-1" surfaces SCRUM-1, SCRUM-10, SCRUM-12, …).
+ * Optionally scoped to a single project so suggestions stay within it.
+ */
+export async function pickIssues(
+  creds: JiraCredentials,
+  query: string,
+  projectKey?: string | null
+): Promise<{ key: string; summary: string }[]> {
+  const params = new URLSearchParams({ query, showSubTasks: 'true', showSubTaskParent: 'true' });
+  if (projectKey?.trim()) {
+    params.set('currentJQL', `project = "${projectKey.trim().replace(/"/g, '')}"`);
+  }
+
+  const data = (await jiraFetch(creds, `/rest/api/3/issue/picker?${params.toString()}`, {
+    method: 'GET',
+  })) as PickerResponse;
+
+  const seen = new Set<string>();
+  const results: { key: string; summary: string }[] = [];
+  for (const section of data.sections ?? []) {
+    for (const issue of section.issues ?? []) {
+      if (!issue.key || seen.has(issue.key)) continue;
+      seen.add(issue.key);
+      results.push({ key: issue.key, summary: issue.summaryText ?? issue.summary ?? issue.key });
+    }
+  }
+  return results;
+}
+
+/** Write a story-points value onto a Jira issue's story-points field. */
+export async function updateStoryPoints(
+  creds: JiraCredentials,
+  issueKey: string,
+  storyPointsFieldId: string,
+  points: number | null
+): Promise<void> {
+  await jiraFetch(creds, `/rest/api/3/issue/${encodeURIComponent(issueKey)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ fields: { [storyPointsFieldId]: points } }),
+  });
 }

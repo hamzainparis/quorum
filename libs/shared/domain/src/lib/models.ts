@@ -5,6 +5,10 @@ export type VoteValue = number | '?';
 
 export const FIBONACCI_DECK: VoteValue[] = [1, 2, 3, 5, 8, 13, 21, '?'];
 
+/** Where a ticket originated. 'jira' tickets were imported live via the Jira REST API
+ * and carry a real Jira issue key, so their story points can be synced back to Jira. */
+export type TicketSource = 'jira';
+
 export interface Ticket {
   id: string;
   key: string;
@@ -13,6 +17,7 @@ export interface Ticket {
   desc: string;
   priority: Priority;
   estimate: number | null;
+  source?: TicketSource;
 }
 
 export interface Player {

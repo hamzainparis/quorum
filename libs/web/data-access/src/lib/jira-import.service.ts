@@ -1,6 +1,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { ImportTicketsResult, JiraImportPayload } from '@quorum/shared-domain';
+import {
+  ImportTicketsResult,
+  JiraImportPayload,
+  JiraSearchPayload,
+  JiraSearchResult,
+  JiraStoryPointsPayload,
+  JiraStoryPointsResult,
+} from '@quorum/shared-domain';
 import { firstValueFrom } from 'rxjs';
 import { QUORUM_APP_CONFIG } from './app-config.token';
 
@@ -13,6 +20,26 @@ export class JiraImportService {
     try {
       return await firstValueFrom(
         this.http.post<ImportTicketsResult>(`${this.config.apiUrl}/jira/import`, payload)
+      );
+    } catch (err) {
+      throw new Error(this.toMessage(err));
+    }
+  }
+
+  async search(payload: JiraSearchPayload): Promise<JiraSearchResult> {
+    try {
+      return await firstValueFrom(
+        this.http.post<JiraSearchResult>(`${this.config.apiUrl}/jira/search`, payload)
+      );
+    } catch (err) {
+      throw new Error(this.toMessage(err));
+    }
+  }
+
+  async setStoryPoints(payload: JiraStoryPointsPayload): Promise<JiraStoryPointsResult> {
+    try {
+      return await firstValueFrom(
+        this.http.post<JiraStoryPointsResult>(`${this.config.apiUrl}/jira/story-points`, payload)
       );
     } catch (err) {
       throw new Error(this.toMessage(err));

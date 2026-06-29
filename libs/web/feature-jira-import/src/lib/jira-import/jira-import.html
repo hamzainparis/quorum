@@ -63,7 +63,55 @@
         }
 
         <label class="qrm-jira-import__field">
-          <span class="qrm-jira-import__label">Project key <span class="qrm-jira-import__optional">(or use JQL below)</span></span>
+          <span class="qrm-jira-import__label">Find tickets <span class="qrm-jira-import__optional">(search by key or summary)</span></span>
+          <div class="qrm-jira-import__search">
+            <input
+              class="qrm-jira-import__input"
+              [value]="jiraSearchQuery()"
+              (input)="onJiraSearchInput($event)"
+              [disabled]="!hasCredentials()"
+              placeholder="e.g. SCRUM-1"
+              autocomplete="off"
+            />
+
+            @if (jiraSearching() || jiraSuggestions().length || jiraSearchError()) {
+              <div class="qrm-jira-import__suggestions">
+                @if (jiraSearching()) {
+                  <div class="qrm-jira-import__suggestion-empty">Searching…</div>
+                } @else if (jiraSearchError()) {
+                  <div class="qrm-jira-import__suggestion-empty">⚠ {{ jiraSearchError() }}</div>
+                } @else if (!jiraSuggestions().length) {
+                  <div class="qrm-jira-import__suggestion-empty">No matching issues</div>
+                } @else {
+                  @for (s of jiraSuggestions(); track s.key) {
+                    <button
+                      type="button"
+                      class="qrm-jira-import__suggestion"
+                      (click)="selectSuggestion(s)"
+                    >
+                      <span class="qrm-jira-import__suggestion-key">{{ s.key }}</span>
+                      <span class="qrm-jira-import__suggestion-summary">{{ s.summary }}</span>
+                    </button>
+                  }
+                }
+              </div>
+            }
+          </div>
+        </label>
+
+        @if (selectedIssues().length) {
+          <div class="qrm-jira-import__chips">
+            @for (s of selectedIssues(); track s.key) {
+              <span class="qrm-jira-import__chip" [title]="s.summary">
+                {{ s.key }}
+                <button type="button" class="qrm-jira-import__chip-remove" aria-label="Remove" (click)="removeSelected(s.key)">✕</button>
+              </span>
+            }
+          </div>
+        }
+
+        <label class="qrm-jira-import__field">
+          <span class="qrm-jira-import__label">Project key <span class="qrm-jira-import__optional">(import whole project, or use JQL below)</span></span>
           <input
             class="qrm-jira-import__input"
             [value]="jiraProjectKey()"
@@ -94,7 +142,13 @@
         <div class="qrm-jira-import__footer">
           <qrm-button variant="secondary" (click)="closeImport.emit()">Cancel</qrm-button>
           <qrm-button variant="primary" [disabled]="!jiraCanSubmit()" (click)="submitJira()">
-            {{ jiraSubmitting() ? 'Importing…' : 'Import backlog' }}
+            @if (jiraSubmitting()) {
+              Importing…
+            } @else if (selectedIssues().length) {
+              Import {{ selectedIssues().length }} ticket{{ selectedIssues().length === 1 ? '' : 's' }}
+            } @else {
+              Import backlog
+            }
           </qrm-button>
         </div>
       </div>

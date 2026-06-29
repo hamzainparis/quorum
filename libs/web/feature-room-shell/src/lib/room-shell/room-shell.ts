@@ -1,7 +1,7 @@
 import { DestroyRef, ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RoomSnapshot, VoteValue } from '@quorum/shared-domain';
-import { CardThemeService, ClientIdService, ProjectSettings, ProjectSettingsService, RoomSocketService, UserProfileService } from '@quorum/web-data-access';
+import { CardThemeService, ClientIdService, JiraImportService, ProjectSettings, ProjectSettingsService, RoomSocketService, UserProfileService } from '@quorum/web-data-access';
 import { Avatar, Button } from '@quorum/web-ui';
 import { Board } from '@quorum/web-feature-board';
 import { Chat } from '@quorum/web-feature-chat';
@@ -32,6 +32,7 @@ export class RoomShell {
   private readonly settingsSvc = inject(ProjectSettingsService);
   private readonly userProfile = inject(UserProfileService);
   private readonly cardThemeSvc = inject(CardThemeService);
+  private readonly jiraImportSvc = inject(JiraImportService);
 
   readonly currentPlayerId = this.clientId.getOrCreate();
 
@@ -116,10 +117,40 @@ export class RoomShell {
 
   assignEstimate(value: number): void {
     this.roomSocket.assignEstimate(value);
+    const activeId = this.snapshot()?.activeTicketId;
+    if (activeId) this.syncStoryPointsToJira(activeId, value);
   }
 
   setEstimate(payload: { ticketId: string; value: number | null }): void {
     this.roomSocket.setEstimate(payload.ticketId, payload.value);
+    this.syncStoryPointsToJira(payload.ticketId, payload.value);
+  }
+
+  /**
+   * When a ticket that was imported live from Jira is sized, push the story points back
+   * onto the originating Jira issue. Only the facilitator's session holds the Jira
+   * credentials (kept in memory, never persisted), so this runs best-effort there and
+   * surfaces a non-blocking note if Jira rejects the update.
+   */
+  private syncStoryPointsToJira(ticketId: string, value: number | null): void {
+    const ticket = this.snapshot()?.tickets.find((t) => t.id === ticketId);
+    if (ticket?.source !== 'jira') return;
+
+    const s = this.settingsSvc.settings();
+    if (!s.jiraSiteUrl.trim() || !s.jiraEmail.trim() || !s.jiraApiToken.trim()) return;
+
+    this.jiraImportSvc
+      .setStoryPoints({
+        siteUrl: s.jiraSiteUrl.trim(),
+        email: s.jiraEmail.trim(),
+        apiToken: s.jiraApiToken.trim(),
+        issueKey: ticket.key,
+        points: value,
+      })
+      .catch((err: unknown) => {
+        const reason = err instanceof Error ? err.message : 'unknown error';
+        this.errorMessage.set(`Could not update ${ticket.key} story points in Jira: ${reason}`);
+      });
   }
 
   deleteTicket(ticketId: string): void {

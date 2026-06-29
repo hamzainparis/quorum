@@ -32,5 +32,6 @@ export function mapJiraIssue(issue: JiraIssue, storyPointsFieldId: string | null
     desc: adfToHtml(fields['description']),
     priority: mapPriority(priority?.name),
     estimate,
+    source: 'jira',
   };
 }

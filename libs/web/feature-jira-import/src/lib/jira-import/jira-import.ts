@@ -8,7 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { Priority, Ticket, TicketType } from '@quorum/shared-domain';
+import { JiraIssueSuggestion, Priority, Ticket, TicketType } from '@quorum/shared-domain';
 import { JiraImportService, ProjectSettingsService, RoomSocketService } from '@quorum/web-data-access';
 import { Button, RichEditor } from '@quorum/web-ui';
 
@@ -49,13 +49,31 @@ export class JiraImport {
 
   readonly jiraSettings = this.settingsSvc.settings;
 
-  readonly jiraCanSubmit = computed(
+  // ── Ticket-number autosearch ─────────────────────────────────────
+  readonly jiraSearchQuery = signal('');
+  readonly jiraSuggestions = signal<JiraIssueSuggestion[]>([]);
+  readonly jiraSearching = signal(false);
+  readonly jiraSearchError = signal<string | null>(null);
+  readonly selectedIssues = signal<JiraIssueSuggestion[]>([]);
+
+  private searchTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Guards against an earlier, slower search overwriting a newer one's results. */
+  private searchSeq = 0;
+
+  readonly hasCredentials = computed(
     () =>
-      !this.jiraSubmitting() &&
-      (this.jiraProjectKey().trim().length > 0 || this.jiraJql().trim().length > 0) &&
       this.jiraSettings().jiraSiteUrl.trim().length > 0 &&
       this.jiraSettings().jiraEmail.trim().length > 0 &&
       this.jiraSettings().jiraApiToken.trim().length > 0
+  );
+
+  readonly jiraCanSubmit = computed(
+    () =>
+      !this.jiraSubmitting() &&
+      this.hasCredentials() &&
+      (this.selectedIssues().length > 0 ||
+        this.jiraProjectKey().trim().length > 0 ||
+        this.jiraJql().trim().length > 0)
   );
 
   // ── XML tab ──────────────────────────────────────────────────────
@@ -82,6 +100,58 @@ export class JiraImport {
     this.jiraJql.set((e.target as HTMLTextAreaElement).value);
   }
 
+  // ── Autosearch by ticket number / text ───────────────────────────
+  onJiraSearchInput(e: Event): void {
+    const value = (e.target as HTMLInputElement).value;
+    this.jiraSearchQuery.set(value);
+    this.jiraSearchError.set(null);
+    if (this.searchTimer) clearTimeout(this.searchTimer);
+    if (!value.trim() || !this.hasCredentials()) {
+      this.jiraSuggestions.set([]);
+      this.jiraSearching.set(false);
+      return;
+    }
+    // Debounce so we only query Jira once the user pauses typing.
+    this.searchTimer = setTimeout(() => void this.runSearch(value.trim()), 300);
+  }
+
+  private async runSearch(query: string): Promise<void> {
+    const seq = ++this.searchSeq;
+    this.jiraSearching.set(true);
+    const s = this.jiraSettings();
+    try {
+      const result = await this.jiraImportSvc.search({
+        siteUrl: s.jiraSiteUrl.trim(),
+        email: s.jiraEmail.trim(),
+        apiToken: s.jiraApiToken.trim(),
+        query,
+        projectKey: this.jiraProjectKey().trim() || undefined,
+      });
+      if (seq !== this.searchSeq) return; // a newer search superseded this one
+      const selected = new Set(this.selectedIssues().map((i) => i.key));
+      this.jiraSuggestions.set(result.issues.filter((i) => !selected.has(i.key)));
+    } catch (err) {
+      if (seq !== this.searchSeq) return;
+      this.jiraSuggestions.set([]);
+      this.jiraSearchError.set(err instanceof Error ? err.message : 'Search failed.');
+    } finally {
+      if (seq === this.searchSeq) this.jiraSearching.set(false);
+    }
+  }
+
+  selectSuggestion(issue: JiraIssueSuggestion): void {
+    if (!this.selectedIssues().some((i) => i.key === issue.key)) {
+      this.selectedIssues.update((list) => [...list, issue]);
+    }
+    this.jiraSuggestions.update((list) => list.filter((i) => i.key !== issue.key));
+    this.jiraSearchQuery.set('');
+    this.jiraSuggestions.set([]);
+  }
+
+  removeSelected(key: string): void {
+    this.selectedIssues.update((list) => list.filter((i) => i.key !== key));
+  }
+
   async submitJira(): Promise<void> {
     if (!this.jiraCanSubmit()) return;
     this.jiraError.set(null);
@@ -94,8 +164,10 @@ export class JiraImport {
         siteUrl: s.jiraSiteUrl.trim(),
         email: s.jiraEmail.trim(),
         apiToken: s.jiraApiToken.trim(),
-        projectKey: this.jiraProjectKey().trim() || undefined,
-        jql: this.jiraJql().trim() || undefined,
+        // Picked tickets win: import exactly those by key. Otherwise fall back to
+        // the project key / custom JQL backlog import.
+        projectKey: this.selectedIssues().length ? undefined : this.jiraProjectKey().trim() || undefined,
+        jql: this.buildJiraJql(),
       });
       this.closeImport.emit();
     } catch (err) {
@@ -103,6 +175,15 @@ export class JiraImport {
     } finally {
       this.jiraSubmitting.set(false);
     }
+  }
+
+  private buildJiraJql(): string | undefined {
+    const selected = this.selectedIssues();
+    if (selected.length) {
+      const keys = selected.map((i) => `"${i.key.replace(/"/g, '')}"`).join(', ');
+      return `issuekey in (${keys}) ORDER BY created ASC`;
+    }
+    return this.jiraJql().trim() || undefined;
   }
 
   // ── XML tab actions ───────────────────────────────────────────────
